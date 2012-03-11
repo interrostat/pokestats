@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>What am I doing</title>
+    <link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.8.2/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.8.2/css/jquery.dataTables_themeroller.css">
+    <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.8.2/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="jquery.sparkline.min.js"></script>
+
+    <script type="text/javascript">
+$(document).ready(function(){
+    $('#pokemon').dataTable({
+        aaSorting: [],
+        bPaginate: false
+    });
+    $(
+        '#types .boxchart, #generations .boxchart, #stages .boxchart, #percentiles .boxchart'
+    ).sparkline('html', { type: 'box', width: '60em', height: '1em', chartRangeMin: 0, chartRangeMax: {{typemax}} });
+    
+    $('#megachart span').sparkline('html', { type: 'line', height: '20em', chartRangeMax: 200, chartRangeClip: true, defaultPixelsPerValue: 2 });
+});
+</script>
+</head>
+<body>
+    <h3>By Type</h3><br>
+    <table id="types">
+    <thead>
+        <tr>
+            <th>Median Result</th>
+            <th>Min Result</th>
+            <th>Max Result</th>
+            <th>Type</th>
+            <th>Distribution</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for median_count, items, type in typecounts %}
+        <tr>
+            <td>{{ '%.2f' % median_count }}%</td>
+            <td>{{ '%.2f' % min(items) }}%</td>
+            <td>{{ '%.2f' % max(items) }}%</td>
+            <td>{{ type }}</td>
+            <td><span class="boxchart">{{ items|join(',') }}</span></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+
+    <h3>By Generation</h3>
+    <table id="generations">
+    <thead>
+        <tr>
+            <th>Median Result</th>
+            <th>Min Result</th>
+            <th>Max Result</th>
+            <th>Generation</th>
+            <th>Distribution</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for median_count, items, type in gencounts %}
+        <tr>
+            <td>{{ '%.2f' % median_count }}%</td>
+            <td>{{ '%.2f' % min(items) }}%</td>
+            <td>{{ '%.2f' % max(items) }}%</td>
+            <td>{{ type }}</td>
+            <td><span class="boxchart">{{ items|join(',') }}</span></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+
+    <h3>By Stage</h3>
+    <table id="stages">
+    <thead>
+        <tr>
+            <th>Median Result</th>
+            <th>Min Result</th>
+            <th>Max Result</th>
+            <th>Stage</th>
+            <th>Distribution</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for median_count, items, type in stagecounts %}
+        <tr>
+            <td>{{ '%.2f' % median_count }}%</td>
+            <td>{{ '%.2f' % min(items) }}</td>
+            <td>{{ '%.2f' % max(items) }}</td>
+            <td>{{ type }}</td>
+            <td><span class="boxchart">{{ items|join(',') }}</span></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+
+    <h3>By Stat Percentile</h3>
+    <table id="percentiles">
+    <thead>
+        <tr>
+            <th>Median Result</th>
+            <th>Min Results</th>
+            <th>Max Results</th>
+            <th>Percentile (Top x%)</th>
+            <th>Distribution</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for median_count, items, percentile in percentilecounts %}
+        <tr>
+            <td>{{ '%.2f' % median_count }}%</td>
+            <td>{{ '%.2f' % min(items) }}%</td>
+            <td>{{ '%.2f' % max(items) }}%</td>
+            <td>{{ 9-percentile }}0-{{ 10-percentile }}0%</td>
+            <td><span class="boxchart">{{ items|join(',') }}</span></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+
+    <div id="megachart">
+        <h3>Everything, as a line chart</h3><br>
+        <span>{{allcounts|join(',')}}</span>
+    </div>
+
+    <table id="pokemon">
+    <thead>
+        <tr>
+            <th></th>
+            <th>interest</th>
+            <th>e6_count</th>
+            <th>wc_count</th>
+            <th>r34_count</th>
+            <th>number</th>
+            <th>gender ratio</th>
+            <th>name</th>
+            <th>type1</th>
+            <th>type2</th>
+            <th>stage</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for best_count, e6_count, wc_count, r34_count, number, gender_ratio, name, type1, type2, stage in counts %}
+        <tr>
+            <td>{{ loop.index }}.</td>
+            <td>{{ '%.2f' % best_count }}%</td>
+            <td><a href="{{ e6(name) }}">{{ e6_count }}</a></td>
+            <td><a href="{{ wc(name) }}">{{ wc_count }}</a></td>
+            <td><a href="{{ r34(name) }}">{{ r34_count }}</a></td>
+            <td>{{ number }}</td>
+            <td>{{ gender_ratio }}</td>
+            <td>{{ name }}</td>
+            <td>{{ type1 }}</td>
+            <td>{{ type2 }}</td>
+            <td>{{ stage }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+</body>
+</html>
