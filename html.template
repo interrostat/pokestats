@@ -3,160 +3,120 @@
 <head>
     <title>What am I doing</title>
     <link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.8.2/css/jquery.dataTables.css">
-    <link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.8.2/css/jquery.dataTables_themeroller.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.8.2/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" charset="utf8" src="jquery.sparkline.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="js/jquery.sparkline.min.js"></script>
 
     <script type="text/javascript">
 $(document).ready(function(){
     $('#pokemon').dataTable({
         aaSorting: [],
-        bPaginate: false
+        bPaginate: false,
+        bFilter: false
     });
-    $(
-        '#types .boxchart, #generations .boxchart, #stages .boxchart, #percentiles .boxchart'
-    ).sparkline('html', { type: 'box', width: '60em', height: '1em', chartRangeMin: 0, chartRangeMax: {{typemax}} });
+    {% for key in breakdowns.keys() %}
+        $('#{{ key }} .boxchart')
+            .css('visibility', 'visible')
+            .sparkline('html', {
+                type: 'box',
+                width: '60em',
+                height: '1em',
+                chartRangeMin: 0,
+                chartRangeMax: {{ scale_maxes[key] }},
+                outlierFillColor: '#ccc'
+            });
+    {% endfor %}
     
-    $('#megachart span').sparkline('html', { type: 'line', height: '20em', chartRangeMax: 200, chartRangeClip: true, defaultPixelsPerValue: 2 });
+    $('#megachart span').sparkline('html', { type: 'line', height: '20em', chartRangeMax: 1000, chartRangeClip: true, defaultPixelsPerValue: 2 });
 });
 </script>
 </head>
+{% macro breakdown(key, table_name, column_header) -%}
 <body>
-    <h3>By Type</h3><br>
-    <table id="types">
-    <thead>
-        <tr>
-            <th>Median Result</th>
-            <th>Min Result</th>
-            <th>Max Result</th>
-            <th>Type</th>
-            <th>Distribution</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for median_count, items, type in typecounts %}
-        <tr>
-            <td>{{ '%.2f' % median_count }}%</td>
-            <td>{{ '%.2f' % min(items) }}%</td>
-            <td>{{ '%.2f' % max(items) }}%</td>
-            <td>{{ type }}</td>
-            <td><span class="boxchart">{{ items|join(',') }}</span></td>
-        </tr>
-    {% endfor %}
-    </tbody>
-    </table>
+    <div class="page-header"><h2>{{ table_name }}</h2></div>
+    <div class="row">
+        <div class="span10 offset2">
+            <table id="{{ key }}" class="table table-condensed">
+            <thead>
+                <tr>
+                    <th>Median Result</th>
+                    <th>Low Result</th>
+                    <th>High Result</th>
+                    <th>{{ column_header }}</th>
+                    <th>Distribution</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for median_count, counts, key in breakdowns[key] %}
+                <tr>
+                    <td>{{ '%.2f' % median_count }}%</td>
+                    <td>{{ '%.2f' % min(counts) }}%</td>
+                    <td>{{ '%.2f' % max(counts) }}%</td>
+                    <td>{{ key }}</td>
+                    <td><span class="boxchart" style="visibility: hidden">{{ counts|join(',') }}</span></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+        </div>
+    </div>
+{%- endmacro %}
 
-    <h3>By Generation</h3>
-    <table id="generations">
-    <thead>
-        <tr>
-            <th>Median Result</th>
-            <th>Min Result</th>
-            <th>Max Result</th>
-            <th>Generation</th>
-            <th>Distribution</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for median_count, items, type in gencounts %}
-        <tr>
-            <td>{{ '%.2f' % median_count }}%</td>
-            <td>{{ '%.2f' % min(items) }}%</td>
-            <td>{{ '%.2f' % max(items) }}%</td>
-            <td>{{ type }}</td>
-            <td><span class="boxchart">{{ items|join(',') }}</span></td>
-        </tr>
-    {% endfor %}
-    </tbody>
-    </table>
+{{ breakdown('type', 'By Type', 'Type') }}
+{{ breakdown('generation', 'By Generation', 'Generation') }}
+{{ breakdown('stage', 'By Evolution Stage', 'Stage') }}
+{{ breakdown('stat_percentile', 'By Stat Percentile', 'Percentile') }}
 
-    <h3>By Stage</h3>
-    <table id="stages">
-    <thead>
-        <tr>
-            <th>Median Result</th>
-            <th>Min Result</th>
-            <th>Max Result</th>
-            <th>Stage</th>
-            <th>Distribution</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for median_count, items, type in stagecounts %}
-        <tr>
-            <td>{{ '%.2f' % median_count }}%</td>
-            <td>{{ '%.2f' % min(items) }}</td>
-            <td>{{ '%.2f' % max(items) }}</td>
-            <td>{{ type }}</td>
-            <td><span class="boxchart">{{ items|join(',') }}</span></td>
-        </tr>
-    {% endfor %}
-    </tbody>
-    </table>
-
-    <h3>By Stat Percentile</h3>
-    <table id="percentiles">
-    <thead>
-        <tr>
-            <th>Median Result</th>
-            <th>Min Results</th>
-            <th>Max Results</th>
-            <th>Percentile (Top x%)</th>
-            <th>Distribution</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for median_count, items, percentile in percentilecounts %}
-        <tr>
-            <td>{{ '%.2f' % median_count }}%</td>
-            <td>{{ '%.2f' % min(items) }}%</td>
-            <td>{{ '%.2f' % max(items) }}%</td>
-            <td>{{ 9-percentile }}0-{{ 10-percentile }}0%</td>
-            <td><span class="boxchart">{{ items|join(',') }}</span></td>
-        </tr>
-    {% endfor %}
-    </tbody>
-    </table>
-
-    <div id="megachart">
-        <h3>Everything, as a line chart</h3><br>
-        <span>{{allcounts|join(',')}}</span>
+    <div class="page-header">
+        <h3>Everything, as a line chart</h3>
+    </div>
+    <div class="row">
+        <div id="megachart" class="span8 offset2">
+            <span>{{interest_list|join(',')}}</span>
+        </div>
     </div>
 
-    <table id="pokemon">
-    <thead>
-        <tr>
-            <th></th>
-            <th>interest</th>
-            <th>e6_count</th>
-            <th>wc_count</th>
-            <th>r34_count</th>
-            <th>number</th>
-            <th>gender ratio</th>
-            <th>name</th>
-            <th>type1</th>
-            <th>type2</th>
-            <th>stage</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for best_count, e6_count, wc_count, r34_count, number, gender_ratio, name, type1, type2, stage in counts %}
-        <tr>
-            <td>{{ loop.index }}.</td>
-            <td>{{ '%.2f' % best_count }}%</td>
-            <td><a href="{{ e6(name) }}">{{ e6_count }}</a></td>
-            <td><a href="{{ wc(name) }}">{{ wc_count }}</a></td>
-            <td><a href="{{ r34(name) }}">{{ r34_count }}</a></td>
-            <td>{{ number }}</td>
-            <td>{{ gender_ratio }}</td>
-            <td>{{ name }}</td>
-            <td>{{ type1 }}</td>
-            <td>{{ type2 }}</td>
-            <td>{{ stage }}</td>
-        </tr>
-    {% endfor %}
-    </tbody>
-    </table>
+    <div class="page-header">
+        <h2>Pokemon</h2>
+    </div>
+    <div class="row">
+        <div class="span11 offset1">
+            <table id="pokemon" class="table table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Interest</th>
+                        <th>e621.net</th>
+                        <th>wildcritters.ws</th>
+                        <th>rule34.xxx</th>
+                        <th>Generation</th>
+                        <th>Number</th>
+                        <th>Name</th>
+                        <th>Type1</th>
+                        <th>Type2</th>
+                        <th>Stage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for row in rows %}
+                    <tr>
+                        <td>{{ loop.index }}.</td>
+                        <td>{{ '%.2f' % row.interest_score }}%</td>
+                        <td><a href="{{ sites.e621.get_url(row.name) }}">{{ sites.e621.pokemon_counts[row.number] }}</a></td>
+                        <td><a href="{{ sites.wildcritters.get_url(row.name) }}">{{ sites.wildcritters.pokemon_counts[row.number] }}</a></td>
+                        <td><a href="{{ sites.rule34.get_url(row.name) }}">{{ sites.rule34.pokemon_counts[row.number] }}</a></td>
+                        <td>{{ row.generation }}</td>
+                        <td>#{{ row.number }}</td>
+                        <td>{{ row.name }}</td>
+                        <td>{{ row.type1 }}</td>
+                        <td>{{ row.type2 }}</td>
+                        <td>{{ row.stage }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </body>
 </html>
