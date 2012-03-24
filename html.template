@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>What am I doing</title>
+    <title>Pok&eacute;stats</title>
     <link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.8.2/css/jquery.dataTables.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.8.2/jquery.dataTables.min.js"></script>
     <script type="text/javascript" charset="utf8" src="js/jquery.sparkline.min.js"></script>
@@ -31,10 +33,47 @@ $(document).ready(function(){
     $('#megachart span').sparkline('html', { type: 'line', height: '20em', chartRangeMax: 1000, chartRangeClip: true, defaultPixelsPerValue: 2 });
 });
 </script>
+<style>
+    body {
+        padding-top: 40px;
+    }
+</style>
 </head>
-{% macro breakdown(key, table_name, column_header) -%}
 <body>
-    <div class="page-header"><h2>{{ table_name }}</h2></div>
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <ul class="nav pull-left">
+                <li><a href="#start">Pok&eacute;stats!</a></li>
+            </ul>
+            <div class="container">
+                    
+                <ul class="nav">
+                    <li><a href="#chart_type">By Type</a></li>
+                    <li><a href="#chart_generation">By Generation</a></li>
+                    <li><a href="#chart_stage">By Evolution Stage</a></li>
+                    <li><a href="#chart_stat_percentile">By Stat Percentile</a></li>
+                    
+                    <li class="divider-vertical"></li>
+                    
+                    <li><a href="#pokemon_data">Details</a></li>
+
+                </ul>
+                <ul class="nav pull-right">
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#faq">About</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="start"></div>
+
+    <div class="hero-unit alert information" style="background-color: #D9EDF7; border-color: #BCE8F1; color: #3A87AD;">
+        <h1 style="text-align: center">Pok&eacute;stats!</h1>
+        <h3 style="text-align: center">There's <i>how much</i> of <i>WHAT</i> on the Internet?</h3>
+    </div>
+
+{% macro breakdown(key, table_name, column_header) -%}
+    <div id="chart_{{ key }}" class="page-header"><h2>{{ table_name }}</h2></div>
     <div class="row">
         <div class="span10 offset2">
             <table id="{{ key }}" class="table table-condensed">
@@ -77,7 +116,7 @@ $(document).ready(function(){
         </div>
     </div>
 
-    <div class="page-header">
+    <div class="page-header" id="pokemon_data">
         <h2>Pokemon</h2>
     </div>
     <div class="row">
@@ -116,6 +155,74 @@ $(document).ready(function(){
                 {% endfor %}
                 </tbody>
             </table>
+        </div>
+    </div>
+
+
+    <div class="page-header" id="faq">
+        <h3>FAQ</h3>
+    </div>
+
+{% macro faq(title) -%}
+    <div class="row" style="margin-top: 2em">
+        <div class="span8 offset1">
+            <h4>{{ title }}</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8 offset1">
+        {{ caller() }}
+        </div>
+    </div>
+{%- endmacro %}
+
+    {% call faq('Dear God, WHY?') %}
+       <p>
+            Because <em>data is delicious.</em>
+        </p>
+    {% endcall %}
+
+    {% call faq('How did you do this?') %}
+       <p>
+            It's all done in Python.<br>
+            A little script fetches all the data from the sites, results are parsed out, and a page is generated.
+            The source is even <a href="https://github.com/interrostat/pokestats">on Github</a> for your perusal.
+            I'd like to provide specific thanks to <a href="https://github.com/veekun/pokedex">veekun/pokedex</a>, for having such handy data files,
+            and <a href="http://jinja.pocoo.org/docs/">jinja2</a>, for making templating easy
+        </p>
+    {% endcall %}
+
+    {% call faq('Can I help? / Hey, I run one of these sites!') %}
+       <p>
+            Awesome! (Yes, I'm totally hoping this will make the rounds all the way to an admin)<br>
+            I'm trying not to hammer anybody's site; One search request is made per pokemon, one at a time. At the scale of those sites, that's nothing.
+        </p>
+        <p>
+            But there's some data I'd love to collect that I can't this way.
+        </p>
+        <p>
+            If I could easily get the image md5-names for each pokemon, I could deduplicate the results between sites.
+            Even better, if I could get the tags for each image, there could be breakdowns on tag relationships. Wouldn't it be great to see charts of "% Male, % Gay, % Straight, % Lesbian, % Female, % Group / Other", both overall and for each pokemon?
+        </p>
+        <p>
+            I sure think it would be.
+        </p>
+    {% endcall %}
+
+    <div class="page-header" id="about">
+        <h3>About</h3>
+    </div>
+    <div class="row">
+        <div class="span11 offset1">
+            <p>
+                This site was built by Interrostat.
+                <address>
+                    <strong>Twitter</strong>
+                    <a href="https://twitter.com/interrostat">@interrostat</a><br>
+                    <strong>Github</strong>
+                    <a href="https://github.com/interrostat">interrostat</a>
+                </address>
+            </p>
         </div>
     </div>
 </body>
