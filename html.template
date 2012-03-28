@@ -123,6 +123,12 @@ body {
         </div>
     </div>
 {%- endmacro %}
+{% macro ratio_entry(row, category_name, records, color, character) %}
+    <div 
+        title="{{category_name}}: {{ records }} Results ({{ '%.1f' % (records / row.ratios.total_size) }}% of {{ (row.ratios.total_size*100)|int }})"
+        style="width: {{ records / row.ratios.total_size}}%; background-color: #{{ color }};">{{ character }}</div>
+                                
+{%- endmacro %}
 
 {{ breakdown('type', 'By Type', 'Type') }}
 {{ breakdown('generation', 'By Generation', 'Generation') }}
@@ -177,40 +183,20 @@ body {
                         <td>
                             <div class="ratios">
                             {% if row.ratios.unknown / row.ratios.all_size < 0.8 and row.ratios.all_size > 50 %}
-                                <div
-                                    title="Bisexual/Group: {{ row.ratios.group }} Results (of {{ row.ratios.all_size|int }})"
-                                    style="width: {{ row.ratios.group / row.ratios.total_size}}%; background-color: #c07;">B</div>
-                                <div 
-                                    title="Ambiguous/Intersex/Herm: {{ row.ratios.ambiguous }} Results (of {{ row.ratios.all_size|int }})"
-                                    style="width: {{ row.ratios.ambiguous / row.ratios.total_size}}%; background-color: #902;">?</div>
+                                {{ ratio_entry(row, 'Bisexual/Group', row.ratios.group, 'C07', 'B') }}
+                                {{ ratio_entry(row, 'Ambiguous/Intersex/Herm', row.ratios.ambiguous, '902', '?') }}
 
-                                <div 
-                                    title="Gay: {{ row.ratios.gay }} Results (of {{ row.ratios.all_size|int }})"
-                                    style="width: {{ row.ratios.gay / row.ratios.total_size}}%; background-color: #F70;">G</div>
-                                <div 
-                                    title="Male (inferred): {{ row.ratios.weakmale }} Results (of {{ row.ratios.all_size|int }})"
-                                    style="width: {{ row.ratios.weakmale / row.ratios.total_size}}%; background-color: #FA0;">m</div>
-                                <div 
-                                    title="Male: {{ row.ratios.male }} Results (of {{ row.ratios.all_size|int }})"
-                                    style="width: {{ row.ratios.male / row.ratios.total_size}}%; background-color: #FD0;">M</div>
+                                {{ ratio_entry(row, 'Gay', row.ratios.gay, 'F70', 'G') }}
+                                {{ ratio_entry(row, 'Male (inferred)', row.ratios.weakmale, 'FA0', 'm') }}
+                                {{ ratio_entry(row, 'Male', row.ratios.male, 'FD0', 'M') }}
 
-                                <div 
-                                    title="Straight (inferred): {{ row.ratios.weakstraight }} Results (of {{ row.ratios.all_size|int }})"
-                                    style="width: {{ row.ratios.weakstraight / row.ratios.total_size}}%; background-color: #9E0;">s</div>
-                                <div 
-                                    title="Straight: {{ row.ratios.straight }} Results (of {{ row.ratios.all_size|int }})"
-                                    style="width: {{ row.ratios.straight / row.ratios.total_size}}%; background-color: #0c0;">S</div>
+                                {{ ratio_entry(row, 'Straight (inferred)', row.ratios.weakstraight, '9E0', 's') }}
+                                {{ ratio_entry(row, 'Straight', row.ratios.straight, '0c0', 'S') }}
 
-                                <div 
-                                    title="Female: {{ row.ratios.female }} Results (of {{ row.ratios.all_size|int }})"
-                                    style="width: {{ row.ratios.female / row.ratios.total_size}}%; background-color: #14A;">F</div>
-                                <div 
-                                    title="Female (inferred): {{ row.ratios.weakfemale }} Results (of {{ row.ratios.all_size|int }})"
-                                    style="width: {{ row.ratios.weakfemale / row.ratios.total_size}}%; background-color: #31A;">f</div>
-                                <div 
-                                    title="Lesbian: {{ row.ratios.lesbian }} Results (of {{ row.ratios.all_size|int }})"
-                                    style="width: {{ row.ratios.lesbian / row.ratios.total_size}}%; background-color: #71A;">L</div>
-                                
+                                {{ ratio_entry(row, 'Female', row.ratios.female, '14A', 'F') }}
+                                {{ ratio_entry(row, 'Female (inferred)', row.ratios.weakfemale, '31A', 'f') }}
+                                {{ ratio_entry(row, 'Lesbian', row.ratios.lesbian, '71A', 'L') }}
+
                                 <div 
                                     title="Unknown: {{ row.ratios.unknown }} Results (of {{ row.ratios.all_size|int }})"
                                     style="clear: left; height: 6px; font-size: 6px; width: {{ row.ratios.unknown / row.ratios.all_size * 100}}%; background-color: #666;"></div>

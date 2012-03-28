@@ -253,6 +253,15 @@ def analyze_ratios(posts):
 
 		elif ambiguous_match:
 			ratios['ambiguous'] += 1
+		elif male_match and female_match:
+			#sigh. this is a bad place to be in.
+			#it's probably a poorly tagged 'straight'. Could also be a herm.
+			#let's hope the 'solo' tag exists, at least
+			if 'solo' in post_tags:
+				ratios['ambiguous'] += 1
+			else:
+				ratios['straight'] += 1
+
 		elif male_match:
 			ratios['male'] += 1
 		elif female_match:
