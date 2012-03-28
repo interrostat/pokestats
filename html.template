@@ -34,9 +34,30 @@ $(document).ready(function(){
 });
 </script>
 <style>
-    body {
-        padding-top: 40px;
-    }
+
+body {
+    padding-top: 40px;
+}
+.ratios {
+    width: 250px;
+    height: 18px;
+    border: 0;
+}
+
+.ratios div {
+    display: inline-block;
+    float: left;
+    height: 12px;
+    line-height: 12px;
+    font-size: 8px;
+    overflow: hidden;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+    color: white;
+}
+
+
 </style>
 </head>
 <body>
@@ -71,6 +92,7 @@ $(document).ready(function(){
         <h1 style="text-align: center">Pok&eacute;stats!</h1>
         <h3 style="text-align: center">There's <i>how much</i> of <i>WHAT</i> on the Internet?</h3>
     </div>
+{% macro score(value) %}{{ value|int }}{% endmacro %}
 
 {% macro breakdown(key, table_name, column_header) -%}
     <div id="chart_{{ key }}" class="page-header"><h2>{{ table_name }}</h2></div>
@@ -89,9 +111,9 @@ $(document).ready(function(){
             <tbody>
             {% for median_count, counts, key in breakdowns[key] %}
                 <tr>
-                    <td>{{ '%.2f' % median_count }}%</td>
-                    <td>{{ '%.2f' % min(counts) }}%</td>
-                    <td>{{ '%.2f' % max(counts) }}%</td>
+                    <td>{{ score(median_count) }}</td>
+                    <td>{{ score(min(counts)) }}</td>
+                    <td>{{ score(max(counts)) }}</td>
                     <td>{{ key }}</td>
                     <td><span class="boxchart" style="visibility: hidden">{{ counts|join(',') }}</span></td>
                 </tr>
@@ -125,7 +147,7 @@ $(document).ready(function(){
                 <thead>
                     <tr>
                         <th>Rank</th>
-                        <th>Interest</th>
+                        <th>Total Results</th>
                         <th>e621.net</th>
                         <th>wildcritters.ws</th>
                         <th>rule34.xxx</th>
@@ -135,13 +157,14 @@ $(document).ready(function(){
                         <th>Type1</th>
                         <th>Type2</th>
                         <th>Stage</th>
+                        <th>Sexuality Ratios</th>
                     </tr>
                 </thead>
                 <tbody>
                 {% for row in rows %}
                     <tr>
                         <td>{{ loop.index }}.</td>
-                        <td>{{ '%.2f' % row.interest_score }}%</td>
+                        <td>{{ score(row.interest_score) }}</td>
                         <td><a href="{{ sites.e621.get_url(row.name) }}">{{ sites.e621.pokemon_counts[row.number] }}</a></td>
                         <td><a href="{{ sites.wildcritters.get_url(row.name) }}">{{ sites.wildcritters.pokemon_counts[row.number] }}</a></td>
                         <td><a href="{{ sites.rule34.get_url(row.name) }}">{{ sites.rule34.pokemon_counts[row.number] }}</a></td>
@@ -151,6 +174,51 @@ $(document).ready(function(){
                         <td>{{ row.type1 }}</td>
                         <td>{{ row.type2 }}</td>
                         <td>{{ row.stage }}</td>
+                        <td>
+                            <div class="ratios">
+                            {% if row.ratios.unknown / row.ratios.all_size < 0.8 and row.ratios.all_size > 50 %}
+                                <div
+                                    title="Bisexual/Group: {{ row.ratios.group }} Results (of {{ row.ratios.all_size|int }})"
+                                    style="width: {{ row.ratios.group / row.ratios.total_size}}%; background-color: #c07;">B</div>
+                                <div 
+                                    title="Ambiguous/Intersex/Herm: {{ row.ratios.ambiguous }} Results (of {{ row.ratios.all_size|int }})"
+                                    style="width: {{ row.ratios.ambiguous / row.ratios.total_size}}%; background-color: #902;">?</div>
+
+                                <div 
+                                    title="Gay: {{ row.ratios.gay }} Results (of {{ row.ratios.all_size|int }})"
+                                    style="width: {{ row.ratios.gay / row.ratios.total_size}}%; background-color: #F70;">G</div>
+                                <div 
+                                    title="Male (inferred): {{ row.ratios.weakmale }} Results (of {{ row.ratios.all_size|int }})"
+                                    style="width: {{ row.ratios.weakmale / row.ratios.total_size}}%; background-color: #FA0;">m</div>
+                                <div 
+                                    title="Male: {{ row.ratios.male }} Results (of {{ row.ratios.all_size|int }})"
+                                    style="width: {{ row.ratios.male / row.ratios.total_size}}%; background-color: #FD0;">M</div>
+
+                                <div 
+                                    title="Straight (inferred): {{ row.ratios.weakstraight }} Results (of {{ row.ratios.all_size|int }})"
+                                    style="width: {{ row.ratios.weakstraight / row.ratios.total_size}}%; background-color: #9E0;">s</div>
+                                <div 
+                                    title="Straight: {{ row.ratios.straight }} Results (of {{ row.ratios.all_size|int }})"
+                                    style="width: {{ row.ratios.straight / row.ratios.total_size}}%; background-color: #0c0;">S</div>
+
+                                <div 
+                                    title="Female: {{ row.ratios.female }} Results (of {{ row.ratios.all_size|int }})"
+                                    style="width: {{ row.ratios.female / row.ratios.total_size}}%; background-color: #14A;">F</div>
+                                <div 
+                                    title="Female (inferred): {{ row.ratios.weakfemale }} Results (of {{ row.ratios.all_size|int }})"
+                                    style="width: {{ row.ratios.weakfemale / row.ratios.total_size}}%; background-color: #31A;">f</div>
+                                <div 
+                                    title="Lesbian: {{ row.ratios.lesbian }} Results (of {{ row.ratios.all_size|int }})"
+                                    style="width: {{ row.ratios.lesbian / row.ratios.total_size}}%; background-color: #71A;">L</div>
+                                
+                                <div 
+                                    title="Unknown: {{ row.ratios.unknown }} Results (of {{ row.ratios.all_size|int }})"
+                                    style="clear: left; height: 6px; font-size: 6px; width: {{ row.ratios.unknown / row.ratios.all_size * 100}}%; background-color: #666;"></div>
+                            {% else %}
+                                Insufficient data.
+                            {% endif %}
+                            </div>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -203,6 +271,15 @@ $(document).ready(function(){
         <p>
             If I could easily get the image md5-names for each pokemon, I could deduplicate the results between sites.
             Even better, if I could get the tags for each image, there could be breakdowns on tag relationships. Wouldn't it be great to see charts of "% Male, % Gay, % Straight, % Lesbian, % Female, % Group / Other", both overall and for each pokemon?
+        </p>
+        <p>
+            I sure think it would be.
+        </p>
+    {% endcall %}
+
+    {% call faq('Why did you choose these sites?') %}
+       <p>
+            They're the biggest sites I could easily query.
         </p>
         <p>
             I sure think it would be.
