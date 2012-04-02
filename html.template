@@ -7,16 +7,63 @@
     <link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.8.2/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.8.2/jquery.dataTables.js"></script>
     <script type="text/javascript" charset="utf8" src="js/jquery.sparkline.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="js/dygraph-combined.js"></script>
 
     <script type="text/javascript">
+var pokemon = {{ pokemon|safe }};
+
+//hey datatables, hungarian-notation javascript identifiers are awful
+
+$.fn.dataTableExt.oSort['formatted-num-asc'] = function(a,b) {
+    a = a.replace( /<.*?>/g, "" );
+    b = b.replace( /<.*?>/g, "" );
+    var x = a.match(/\d/) ? a.replace( /[^\d\-\.]/g, "" ) : 0;
+    var y = b.match(/\d/) ? b.replace( /[^\d\-\.]/g, "" ) : 0;
+    return parseFloat(x) - parseFloat(y);
+};
+$.fn.dataTableExt.oSort['formatted-num-desc'] = function(a,b) {
+    a = a.replace( /<.*?>/g, "" );
+    b = b.replace( /<.*?>/g, "" );
+    var x = a.match(/\d/) ? a.replace( /[^\d\-\.]/g, "" ) : 0;
+    var y = b.match(/\d/) ? b.replace( /[^\d\-\.]/g, "" ) : 0;
+    return parseFloat(y) - parseFloat(x);
+};
+
 $(document).ready(function(){
-    $('#pokemon').dataTable({
+    var dt = $('#pokemon').dataTable({
         aaSorting: [],
         bPaginate: false,
-        bFilter: false
+        bFilter: false,
+        aoColumnDefs: [
+            {
+                aTargets: [0,1,2,3,4,5,6],
+                sType: 'formatted-num'
+            },
+             {
+                aTargets: [12,13,14,15,16,17,18,19,20],
+                sType: 'formatted-num',
+                bVisible: false
+            },
+            {
+                aTargets: [11],
+                bSortable: false
+            }
+        ]
     });
+    $('.sort-group', dt).click(function() {
+        dt.fnSort([[12, 'desc']]);
+    });
+    $('.sort-ambiguous', dt).click(function() { dt.fnSort([[13, 'desc']]);});
+    $('.sort-gay', dt).click(function() { dt.fnSort([[14, 'desc']]);});
+    $('.sort-male', dt).click(function() { dt.fnSort([[15, 'desc']]);});
+    $('.sort-straight', dt).click(function() { dt.fnSort([[16, 'desc']]);});
+    $('.sort-female', dt).click(function() { dt.fnSort([[17, 'desc']]);});
+    $('.sort-lesbian', dt).click(function() { dt.fnSort([[18, 'desc']]);});
+    $('.sort-allmale', dt).click(function() { dt.fnSort([[19, 'desc']]);});
+    $('.sort-allfemale', dt).click(function() { dt.fnSort([[20, 'desc']]);});
+
     {% for key in breakdowns.keys() %}
         $('#{{ key }} .boxchart')
             .css('visibility', 'visible')
@@ -29,8 +76,20 @@ $(document).ready(function(){
                 outlierFillColor: '#ccc'
             });
     {% endfor %}
-    
-    $('#megachart span').sparkline('html', { type: 'line', height: '20em', chartRangeMax: 1000, chartRangeClip: true, defaultPixelsPerValue: 2 });
+    var g = new Dygraph(
+        document.getElementById('megachart'),
+        {{ graph_data|safe }},
+        { 
+              drawXAxis: false,
+              axes: {
+                x: {
+                  valueFormatter: function(d) {
+                    return "<b>#" + d + " " + pokemon[d] + "</b><br>";
+                  }
+                }
+              }
+            }
+    );
 });
 </script>
 <style>
@@ -57,45 +116,26 @@ body {
     color: white;
 }
 
+th span.sortoptions { font-weight: normal; }
+
 
 </style>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-30509081-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
 </head>
-<body>
-    <div class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-            <ul class="nav pull-left">
-                <li><a href="#start">Pok&eacute;stats!</a></li>
-            </ul>
-            <div class="container">
-                    
-                <ul class="nav">
-                    <li><a href="#chart_type">By Type</a></li>
-                    <li><a href="#chart_generation">By Generation</a></li>
-                    <li><a href="#chart_stage">By Evolution Stage</a></li>
-                    <li><a href="#chart_stat_percentile">By Stat Percentile</a></li>
-                    
-                    <li class="divider-vertical"></li>
-                    
-                    <li><a href="#pokemon_data">Details</a></li>
 
-                </ul>
-                <ul class="nav pull-right">
-                    <li><a href="#faq">FAQ</a></li>
-                    <li><a href="#faq">About</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div id="start"></div>
-
-    <div class="hero-unit alert information" style="background-color: #D9EDF7; border-color: #BCE8F1; color: #3A87AD;">
-        <h1 style="text-align: center">Pok&eacute;stats!</h1>
-        <h3 style="text-align: center">There's <i>how much</i> of <i>WHAT</i> on the Internet?</h3>
-    </div>
 {% macro score(value) %}{{ value|int }}{% endmacro %}
 
 {% macro breakdown(key, table_name, column_header) -%}
-    <div id="chart_{{ key }}" class="page-header"><h2>{{ table_name }}</h2></div>
+    <div id="chart_{{ key }}" class="page-header"><h4>{{ table_name }}</h4></div>
     <div class="row">
         <div class="span10 offset2">
             <table id="{{ key }}" class="table table-condensed">
@@ -129,6 +169,74 @@ body {
         style="width: {{ records / row.ratios.total_size}}%; background-color: #{{ color }};">{{ character }}</div>
                                 
 {%- endmacro %}
+{% macro ratio_pct(records, row) %}<td class="hidden">{{ '%.1f' % (records / row.ratios.total_size) }}</td>{% endmacro %}
+
+{% macro faq(title) -%}
+    <div class="row" style="margin-top: 2em">
+        <div class="span8 offset1">
+            <h4>{{ title }}</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8 offset1">
+        {{ caller() }}
+        </div>
+    </div>
+{%- endmacro %}
+
+<body>
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <ul class="nav pull-left">
+                <li><a href="#start">Pok&eacute;stats!</a></li>
+            </ul>
+            <div class="container">
+                    
+                <ul class="nav">
+                    <li><a href="#chart_type">By Type</a></li>
+                    <li><a href="#chart_generation">By Generation</a></li>
+                    <li><a href="#chart_stage">By Evolution Stage</a></li>
+                    <li><a href="#chart_stat_percentile">By Stat Percentile</a></li>
+                    
+                    <li class="divider-vertical"></li>
+                    
+                    <li><a href="#pokemon_data">Details</a></li>
+
+                </ul>
+                <ul class="nav pull-right">
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#faq">About</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="start"></div>
+
+    <div class="hero-unit alert information" style="background-color: #D9EDF7; border-color: #BCE8F1; color: #3A87AD;">
+        <h1 style="text-align: center">Pok&eacute;stats!</h1>
+        <h3 style="text-align: center">There's <i>how much</i> of <i>WHAT</i> on the Internet?</h3>
+    </div>
+
+    {% call faq('What is this?') %}
+       <p>
+            There's a lot of porn on the internet. Some of that porn goes to sites that ritually tag it with huge amounts of
+            metadata. And while many people use those tags to help find exactly the thing that floats their boat, that's not the
+            only thing you can do with metadata.
+            <br>
+            <br>
+            <h4>You can <i>make charts with it</i>.</h4>
+            <br>
+            <br>
+            And that's exactly what's been done here. The world of Pok&eacute;mon has over six hundred
+            creatures to draw porn of, each filled with in-game mechanical data to cross-reference with.
+        </p>
+        <p>
+            So let's start charting. First are some breakdowns of how various categories fare against each other. Then there's the full table of everything.
+        </p>
+        <p>
+            As a bonus, the tags can be used to learn about the relative sexuality of Pok&eacute;porn - so if you've ever asked "Mirror, mirror, on the wall, who's the gayest of them all?", now you can find out!
+        </p>
+    {% endcall %}
 
 {{ breakdown('type', 'By Type', 'Type') }}
 {{ breakdown('generation', 'By Generation', 'Generation') }}
@@ -139,8 +247,7 @@ body {
         <h3>Everything, as a line chart</h3>
     </div>
     <div class="row">
-        <div id="megachart" class="span8 offset2">
-            <span>{{interest_list|join(',')}}</span>
+        <div id="megachart" class="span12" style="width: 1170px; height: 450px">
         </div>
     </div>
 
@@ -163,7 +270,22 @@ body {
                         <th>Type1</th>
                         <th>Type2</th>
                         <th>Stage</th>
-                        <th>Sexuality Ratios</th>
+                        <th>Sexuality Ratios<br>
+                            <span class="sortoptions">Sort:
+                                <a class="sort-group">Group</a>
+                                <a class="sort-ambiguous">Ambiguous</a>
+                                <a class="sort-gay">Gay</a>
+                                <a class="sort-male">Male</a>
+                                <a class="sort-straight">Straight</a>
+                                <a class="sort-female">Female</a>
+                                <a class="sort-lesbian">Lesbian</a>
+                                <a class="sort-allmale">All Male</a>
+                                <a class="sort-allfemale">All Female</a>
+                            </span>
+                        </th>
+                        <th class="hidden"><th class="hidden"><th class="hidden">
+                        <th class="hidden"><th class="hidden"><th class="hidden">
+                        <th class="hidden"><th class="hidden"><th class="hidden">
                     </tr>
                 </thead>
                 <tbody>
@@ -180,9 +302,17 @@ body {
                         <td>{{ row.type1 }}</td>
                         <td>{{ row.type2 }}</td>
                         <td>{{ row.stage }}</td>
+
+                        {#
+                            in order to let you sort on subbits we need hidden columns
+                            we only show the graph if there's at least 20 results with deduced sexuality,
+                            and it's not more than 90% unknown (often hits, correctly, on genderless ghosts)
+
+                            note that total_size is already divided by 100 so we can express visual percentages more easily
+                        #}
+                        {% if row.ratios.unknown / row.ratios.all_size < 0.9 and row.ratios.total_size >= 0.2 %}
                         <td>
                             <div class="ratios">
-                            {% if row.ratios.unknown / row.ratios.all_size < 0.8 and row.ratios.all_size > 50 %}
                                 {{ ratio_entry(row, 'Bisexual/Group', row.ratios.group, 'C07', 'B') }}
                                 {{ ratio_entry(row, 'Ambiguous/Intersex/Herm', row.ratios.ambiguous, '902', '?') }}
 
@@ -200,11 +330,26 @@ body {
                                 <div 
                                     title="Unknown: {{ row.ratios.unknown }} Results (of {{ row.ratios.all_size|int }})"
                                     style="clear: left; height: 6px; font-size: 6px; width: {{ row.ratios.unknown / row.ratios.all_size * 100}}%; background-color: #666;"></div>
-                            {% else %}
-                                Insufficient data.
-                            {% endif %}
                             </div>
                         </td>
+                        {{ ratio_pct(row.ratios.group, row) }}
+                        {{ ratio_pct(row.ratios.ambiguous, row) }}
+                        {{ ratio_pct(row.ratios.gay, row) }}
+                        {{ ratio_pct(row.ratios.weakmale + row.ratios.male, row) }}
+                        {{ ratio_pct(row.ratios.weakstraight + row.ratios.straight, row) }}
+                        {{ ratio_pct(row.ratios.female + row.ratios.weakfemale, row) }}
+                        {{ ratio_pct(row.ratios.lesbian, row) }}
+                        {{ ratio_pct(row.ratios.weakstraight + row.ratios.straight + row.ratios.male + row.ratios.weakmale + row.ratios.gay, row) }}
+                        {{ ratio_pct(row.ratios.weakstraight + row.ratios.straight + row.ratios.female + row.ratios.weakfemale + row.ratios.lesbian, row) }}
+                        {% else %}
+                        <td>
+                            <div>Insufficient data.</div>
+                        </td>
+                        <td class="hidden"><td class="hidden"><td class="hidden">
+                        <td class="hidden"><td class="hidden"><td class="hidden">
+                        <td class="hidden"><td class="hidden"><td class="hidden">
+                        {% endif %}
+
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -216,19 +361,6 @@ body {
     <div class="page-header" id="faq">
         <h3>FAQ</h3>
     </div>
-
-{% macro faq(title) -%}
-    <div class="row" style="margin-top: 2em">
-        <div class="span8 offset1">
-            <h4>{{ title }}</h4>
-        </div>
-    </div>
-    <div class="row">
-        <div class="span8 offset1">
-        {{ caller() }}
-        </div>
-    </div>
-{%- endmacro %}
 
     {% call faq('Dear God, WHY?') %}
        <p>
@@ -246,29 +378,91 @@ body {
         </p>
     {% endcall %}
 
-    {% call faq('Can I help? / Hey, I run one of these sites!') %}
+    {% call faq('Can I help?') %}
        <p>
             Awesome! (Yes, I'm totally hoping this will make the rounds all the way to an admin)<br>
-            I'm trying not to hammer anybody's site; One search request is made per pokemon, one at a time. At the scale of those sites, that's nothing.
+            I'm trying not to hammer anybody's site; I'm using the APIs they expose to fetch data with.
         </p>
         <p>
-            But there's some data I'd love to collect that I can't this way.
-        </p>
-        <p>
-            If I could easily get the image md5-names for each pokemon, I could deduplicate the results between sites.
-            Even better, if I could get the tags for each image, there could be breakdowns on tag relationships. Wouldn't it be great to see charts of "% Male, % Gay, % Straight, % Lesbian, % Female, % Group / Other", both overall and for each pokemon?
-        </p>
-        <p>
-            I sure think it would be.
+            But the tagging is <b>miserable</b> on some of these posts.
+            If you can improve them, that'd be the best, both for me and for the users of the boards themselves.<br>
+            If you'd rather help with code, the source is on Github, and the most complicated function - by far - is tag analysis.
+            Got ideas? Bring them up there! I'd be happy to take pull requests and discussions.
         </p>
     {% endcall %}
 
     {% call faq('Why did you choose these sites?') %}
        <p>
-            They're the biggest sites I could easily query.
+            They're the biggest sites I could easily query. All three expose an API that makes it simple to programatically fetch all
+            the post information for a given tag, and from there I can eliminate duplicates (by cross-referencing the md5) and learn more tags.
         </p>
         <p>
-            I sure think it would be.
+            <a href="http://www.e621.net/">e621.net</a> is a general-furry pornography board. While it's not focused on Pok&eacute;mon material,
+            it's sheer size and high tagging standards make it a key player in this game.
+        </p>
+        <p>
+            <a href="http://www.wildcritters.ws/">wildcritters.ws</a> supposedly specializes in cute and/or feral material. It's got a lot of Pok&eacute;mon postings,
+            and high tagging standards, but some serious content biases. One third of it's pokemon-tagged posts involve Eevee evolutions!
+        </p>
+        <p>
+            <a href="http://rule34.xxx/">rule34.xxx</a> is the largest site on the booru.org network. It's got a <b>lot</b> of porn. Which is great for counting
+            data, but the site's tagging is extremely poor. It's a miracle that people tag the individual Pok&eacute;mon species at all.
+        </p>
+        <p>
+            Unfortunately, I don't have any data from <a href="http://rule34.paheal.net/">rule34.paheal.net</a>. It appears that the software it runs on, Shimmie,
+            either does not provide an API or it's disabled on that site. Fetching the required data via HTML scraping would be prohibitively painful without one.
+        </p>
+        <p>
+            If you have any other suggestions, let me know! There's contact info at the end.
+        </p>
+    {% endcall %}
+    {% call faq("What's with the sexuality charts?") %}
+        <p>
+            They're an attempt to categorize posts based on the tagging provided. The idea was too great to pass up.<br>
+            Each post is, if possible, categorized into one of the following buckets:
+        </p>
+        <p>
+            <b>G</b>: Bisexual/Group. These posts probably contain more than two characters, and that's as much as can be automatically determined.
+        </p>
+        <p>
+            <b>?</b>: Ambiguous/Intersex/Herm. There's nonbinary gender going on here.
+        </p>
+        <p>
+            <b>G</b>: Gay.
+        </p>
+        <p>
+            <b>M</b>: Male (solo).
+        </p>
+        <p>
+            <b>F</b>: Female (solo).
+        </p>
+        <p>
+            <b>L</b>: Lesbian. 
+        </p>
+        <p>
+            <b>m</b>: Male (inferred). The image did not have sufficient tagging to put it in any of the above categories, but had tags (ie: "penis") implying it depicts a male.
+        </p>
+        <p>
+            <b>f</b>: Female (inferred). See above.
+        </p>
+        <p>
+            <b>s</b>: Straight (inferred). The image was not directly tagged into a category, but picked up signs of both male-inferred and female-inferred. Best guess is, it's straight. Alternatively, the image was directly tagged with 'male' and 'female', but nothing to say it's 'straight' or 'group' or 'ambiguous'.
+        </p>
+    {% endcall %}
+    {% call faq("Can I access the data from this?") %}
+        <p>
+            Absolutely! The post-tag-combining data is available <a href="/combined_data.json">as a JSON file</a>.<br>
+            Do let me know if you do anything interesting with it!
+        </p>
+    {% endcall %}
+    {% call faq("Give me some interesting conclusions from the data.") %}
+        <p>
+            <ul>
+                <li>People seem to like Generation IV more than Generation III</li>
+                <li>The Evolutionary Stage breakdown shows that <b>nobody</b> cares about baby forms.</li>
+                <li>The Stat Percentile breakdown shows that more powerful Pok&eacute;mon are generally more attractive, with a blip corresponding to basic-forms.
+                <li>Not too surprisingly, Gay is dramatically more common than Lesbian is.</li>
+            </ul>
         </p>
     {% endcall %}
 

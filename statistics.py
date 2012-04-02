@@ -5,7 +5,7 @@ import re
 import base64
 import sys
 import os
-import pickle
+import cPickle as pickle
 import csv
 import json
 import xml.dom.minidom
@@ -260,7 +260,7 @@ def analyze_ratios(posts):
 			if 'solo' in post_tags:
 				ratios['ambiguous'] += 1
 			else:
-				ratios['straight'] += 1
+				ratios['weakstraight'] += 1
 
 		elif male_match:
 			ratios['male'] += 1
@@ -337,6 +337,13 @@ if __name__ == '__main__':
 			print len(merged[number])
 
 		pickle.dump((merged, site_counts), open('merged.pickle','w'))
+		class SetEncoder(json.JSONEncoder):
+			def default(self, obj):
+				if isinstance(obj, set):
+					return list(obj)
+				return json.JSONEncoder.default(self, obj)
+
+		json.dump(dict(files=merged, site_counts=site_counts), open('combined_data.json', 'w'), cls=SetEncoder)
 
 
 	else:
@@ -349,7 +356,7 @@ if __name__ == '__main__':
 			for number, name in pokemon:
 				site.pokemon_counts[number] = site_counts[site_name][number]
 
-		interest_list = []
+		graph_data = []
 		interest_map = {}
 
 		#For each pokemon, generate an "Interest Score" using the following method:
@@ -359,15 +366,8 @@ if __name__ == '__main__':
 		for number, name in pokemon:
 			interest_score = float(len(all_data[number]))
 			interest_map[number] = interest_score
-			interest_list.append(interest_score)
-		
-		#print interest_list
-		#median_interest = median(interest_list)
+			graph_data.append([number, interest_score])
 
-		#for number, interest_score in interest_map.items():
-		#	interest_map[number] = interest_score / median_interest * 100
-
-		#interest_list = [interest_score / median_interest * 100 for interest_score in interest_list]
 
 		#Now that we have that, start building up rows for analysis!
 		print 'Creating rows'
@@ -434,7 +434,8 @@ if __name__ == '__main__':
 				rows=rows,
 				breakdowns=breakdowns,
 				scale_maxes=scale_maxes,
-				interest_list = interest_list,
+				graph_data = json.dumps(graph_data),
+				pokemon=json.dumps(dict([(number, name.capitalize()) for number, name in pokemon])),
 
 				sites=sites,
 				min=min,max=max,

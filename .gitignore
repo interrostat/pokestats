@@ -1,5 +1,6 @@
 *.py[co]
 *.pickle
+*.json
 venv
 interrostat
 tables.html
