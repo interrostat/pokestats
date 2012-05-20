@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pok&eacute;stats{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script type="text/javascript" charset="utf8" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="js/bootstrap-tab.js"></script>
+    <script type="text/javascript" charset="utf8" src="js/jquery.dataTables.js"></script>
+    <script type="text/javascript" charset="utf8" src="js/jquery.sparkline.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="js/stats.js"></script>
+    {% block head %}
+    {% endblock %}
+<style>
+.ratios {
+    width: 500px;
+    height: 18px;
+    border: 0;
+}
+
+.ratios div {
+    display: inline-block;
+    float: left;
+    height: 12px;
+    line-height: 12px;
+    font-size: 8px;
+    overflow: hidden;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+    color: white;
+}
+
+th span.sortoptions { font-weight: normal; }
+
+.vertical-text {
+    text-align: center;
+    vertical-align: middle;
+    width: 20px;
+    margin: 0px;
+    padding: 0px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 10px;
+    font-size: 12px;
+    white-space: nowrap;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+}
+
+
+</style>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-30509081-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+{% macro score(value) %}{{ value|int }}{% endmacro %}
+
+{% macro ratio_entry(row, category_name, records, color, character) %}
+    <div 
+        title="{{category_name}}: {{ records }} Results ({{ '%.1f' % (records / row.ratios.total_size) }}% of {{ (row.ratios.total_size*100)|int }})"
+        style="width: {{ records / row.ratios.total_size}}%; background-color: #{{ color }};">{{ character }}</div>
+                                
+{%- endmacro %}
+{% macro ratio_pct(records, row) %}<td class="hidden">{{ '%.1f' % (records / row.ratios.total_size) }}</td>{% endmacro %}
+
+{% macro faq(title, id=None) -%}
+    <div class="row" style="margin-top: 2em" {{ ('id="%s"' % id if id else '')|safe }}>
+        <div class="span8 offset1">
+            <h4>{{ title }}</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8 offset1">
+        {{ caller() }}
+        </div>
+    </div>
+{%- endmacro %}
+{% macro sexuality_header() %}
+    <th style="width: 300px">Sexuality Ratios <sup><a href="faq.html#sexuality">[what?]</a></sup><br>
+        <span class="sortoptions">Sort Sexuality:
+            <a class="sort-group"><sup>(B)</sup> Group</a>,
+            <a class="sort-ambiguous"><sup>(?)</sup> Ambiguous</a>,
+            <a class="sort-gay"><sup>(G)</sup> Gay</a>,
+            <a class="sort-straight"><sup>(Ss)</sup> Straight</a>,
+            <a class="sort-lesbian"><sup>(L)</sup> Lesbian</a>
+            <br>Sort Gender:
+            <a class="sort-male"><sup>(Mm)</sup> Solo Male</a>,
+            <a class="sort-female"><sup>(Ff)</sup> Solo Female</a>,
+            <a class="sort-allmale"><sup>(MmGSs)</sup> Any Male</a>,
+            <a class="sort-allfemale"><sup>(FfLSs)</sup> Any Female</a>
+        </span>
+    </th>
+    <th class="hidden"><th class="hidden"><th class="hidden">
+    <th class="hidden"><th class="hidden"><th class="hidden">
+    <th class="hidden"><th class="hidden"><th class="hidden">
+{%- endmacro %}
+
+{% macro analyze_sexuality(row, min_size) %}
+    {#
+        in order to let you sort on subbits we need hidden columns
+        we only show the graph if there's at least 20 results with deduced sexuality,
+        and it's not more than 90% unknown (often hits, correctly, on genderless ghosts)
+
+        note that total_size is already divided by 100 so we can express visual percentages more easily
+    #}
+    {% if row.ratios.unknown / row.ratios.all_size < 0.9 and row.ratios.total_size >= min_size %}
+    <td>
+        <div class="ratios">
+            {{ ratio_entry(row, 'Bisexual/Group', row.ratios.group, 'C07', 'B') }}
+            {{ ratio_entry(row, 'Ambiguous/Intersex/Herm', row.ratios.ambiguous, '902', '?') }}
+
+            {{ ratio_entry(row, 'Gay', row.ratios.gay, 'F70', 'G') }}
+            {{ ratio_entry(row, 'Male (inferred)', row.ratios.weakmale, 'FA0', 'm') }}
+            {{ ratio_entry(row, 'Male', row.ratios.male, 'FD0', 'M') }}
+
+            {{ ratio_entry(row, 'Straight (inferred)', row.ratios.weakstraight, '9E0', 's') }}
+            {{ ratio_entry(row, 'Straight', row.ratios.straight, '0c0', 'S') }}
+
+            {{ ratio_entry(row, 'Female', row.ratios.female, '14A', 'F') }}
+            {{ ratio_entry(row, 'Female (inferred)', row.ratios.weakfemale, '31A', 'f') }}
+            {{ ratio_entry(row, 'Lesbian', row.ratios.lesbian, '71A', 'L') }}
+
+            <div 
+                title="Unknown: {{ row.ratios.unknown }} Results (of {{ row.ratios.all_size|int }})"
+                style="clear: left; height: 6px; font-size: 6px; width: {{ row.ratios.unknown / row.ratios.all_size * 100}}%; background-color: #666;"></div>
+        </div>
+    </td>
+    {{ ratio_pct(row.ratios.group, row) }}
+    {{ ratio_pct(row.ratios.ambiguous, row) }}
+    {{ ratio_pct(row.ratios.gay, row) }}
+    {{ ratio_pct(row.ratios.weakmale + row.ratios.male, row) }}
+    {{ ratio_pct(row.ratios.weakstraight + row.ratios.straight, row) }}
+    {{ ratio_pct(row.ratios.female + row.ratios.weakfemale, row) }}
+    {{ ratio_pct(row.ratios.lesbian, row) }}
+    {{ ratio_pct(row.ratios.weakstraight + row.ratios.straight + row.ratios.male + row.ratios.weakmale + row.ratios.gay, row) }}
+    {{ ratio_pct(row.ratios.weakstraight + row.ratios.straight + row.ratios.female + row.ratios.weakfemale + row.ratios.lesbian, row) }}
+    {% else %}
+    <td>
+        <div>Insufficient data.</div>
+    </td>
+    <td class="hidden"><td class="hidden"><td class="hidden">
+    <td class="hidden"><td class="hidden"><td class="hidden">
+    <td class="hidden"><td class="hidden"><td class="hidden">
+    {% endif %}
+{%- endmacro %}
+
+{% macro create_chart(source, chart_id, min_size=0.25, show_sites=True, data_label="Total Results") %}
+    <table id="{{ chart_id }}" class="table table-striped table-condensed">
+        <thead>
+            <tr>
+                <th><div class="vertical-text">Rank</div></th>
+                <th><div class="vertical-text">{{ data_label }}</div></th>
+            {% if show_sites %}
+                <th><div class="vertical-text">e621.net</div></th>
+                <th><div class="vertical-text">wildcritters.ws</div></th>
+                <th><div class="vertical-text">wildcritters.net</div></th>
+                <th><div class="vertical-text">rule34.it</div></th>
+                <th><div class="vertical-text">rule34.xxx</div></th>
+            {% endif %}
+                <th><div class="vertical-text">Generation</th>
+                <th><div class="vertical-text">Number</div></th>
+                <th><div class="vertical-text">Name</div></th>
+
+                <th><div class="vertical-text">Type1</div></th>
+                <th><div class="vertical-text">Type2</div></th>
+                <th><div class="vertical-text">Stage</div></th>
+
+                {{ sexuality_header() }}
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in source %}
+            <tr>
+                <td>{{ loop.index }}.</td>
+                <td>{{ score(row.interest_score) }}</td>
+            {% if show_sites %}
+                <td><a href="{{ sites.e621.get_url(row.name) }}">{{ row.e621 }}</a></td>
+                <td><a href="{{ sites.wildcritters.get_url(row.name) }}">{{ row.wildcritters }}</a></td>
+                <td><a href="{{ sites.wildcrittersnet.get_url(row.name) }}">{{ row.wildcrittersnet }}</a></td>
+                <td><a href="{{ sites.rule34it.get_url(row.name) }}">{{ row.rule34it }}</a></td>
+                <td><a href="{{ sites.rule34.get_url(row.name) }}">{{ row.rule34 }}</a></td>
+            {% endif %}
+                <td>{{ row.generation }}</td>
+                <td>#{{ row.number }}</td>
+                <td><a href="http://bulbapedia.bulbagarden.net/wiki/{{ quote(official_names[row.number]) }}_%28Pok%C3%A9mon%29">{{ official_names[row.number] }}</a></td>
+                <td>{{ row.type1 }}</td>
+                <td>{{ row.type2 }}</td>
+                <td>{{ row.stage }}</td>
+
+            {{ analyze_sexuality(row, min_size) }}
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endmacro -%}
+
+<body>
+    <div class="navbar" style="margin-bottom: 0">
+        <div class="navbar-inner">
+            <ul class="nav pull-left">
+                <li><a href="index.html">Pok&eacute;stats!</a></li>
+            </ul>
+            <div class="container">
+                    
+                <ul class="nav">
+                    <li><a href="breakdowns.html">Information Breakdowns</a></li>
+                
+                    <li class="divider-vertical"></li>
+
+                    <li><a href="linecharts.html">Line Charts</a></li>
+                    
+                    <li class="divider-vertical"></li>
+                    
+                    <li><a href="chart.html#pokemon-header">The Big Chart</a></li>
+
+                </ul>
+                <ul class="nav pull-right">
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="start"></div>
+
+    <div class="hero-unit alert information" style="background-color: #D9EDF7; border-color: #BCE8F1; color: #3A87AD;">
+        <h1 style="text-align: center">Pok&eacute;stats!</h1>
+        <h3 style="text-align: center">There's <i>how much</i> of <i>WHAT</i> on the Internet?</h3>
+    </div>
+
+    {% block content %}
+    {% endblock %}
+
+    <div class="page-header" id="about">
+        <h3>About</h3>
+    </div>
+    <div class="row">
+        <div class="span1 offset1">
+            <img src="img/11.png" alt="Usericon">
+        </div>
+        <div class="span9">
+            <p>
+                This site was built by Interrostat.
+                <address>
+                    <strong>Twitter</strong>
+                    <a href="https://twitter.com/interrostat">@interrostat</a><br>
+                    <strong>Github</strong>
+                    <a href="https://github.com/interrostat">interrostat</a>
+                </address>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

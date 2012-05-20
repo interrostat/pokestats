@@ -1,0 +1,88 @@
+{% extends "base.template" %}
+{% block title %} - FAQ{% endblock %}
+{% block head %}
+    <script type="text/javascript" charset="utf8" src="js/dygraph-combined.js"></script>
+    <script type="text/javascript">
+var pokemon = {{ pokemon|safe }};
+var reorderings = {{ reorderings|safe }};
+
+$(document).ready(function(){
+    var g = new Dygraph(
+        document.getElementById('megachart'),
+        {{ graph_data|safe }},
+        { 
+            drawXAxis: false,
+            axes: {
+                x: {
+                  valueFormatter: function(d) {
+                    return "<b>#" + d + " " + pokemon[d] + "</b><br>";
+                  }
+                },
+                y: {
+                  valueFormatter: function(d) {
+                    return d + " images<br>";
+                  }
+                }
+            }
+        }
+    );
+
+    var go = new Dygraph(
+        document.getElementById('megachart_ordered'),
+        {{ ordered_graph_data|safe }},
+        { 
+            drawXAxis: false,
+            axes: {
+                x: {
+                    valueFormatter: function(d) {
+                        return "<b>#" + reorderings[d] + " " + pokemon[reorderings[d]] + "</b><br>";
+                    }
+                },
+                y: {
+                    logscale: true,
+                    valueFormatter: function(d) {
+                        return d + " images<br>";
+                    }
+                }
+            }
+        }
+    );
+});
+</script>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h3>Pok&eacute;mon, by Pok&eacute;dex number.</h3>
+    </div>
+
+    <div class="row">
+        <div id="megachart" class="span12" style="width: 1170px; height: 450px">
+        </div>
+    </div>
+     <div class="row">
+        <div class="span12">
+            <p>
+                <br>
+                This highlights the magnitude of the spikes nicely, but doesn't tell you much else.
+            </p>
+        </div>
+    </div>
+
+     <div class="page-header">
+        <h3>Pok&eacute;mon, by amount of pornography. (log scale)</h3>
+    </div>
+
+    <div class="row">
+        <div id="megachart_ordered" class="span12" style="width: 1170px; height: 450px">
+        </div>
+    </div>
+     <div class="row">
+        <div class="span12">
+            <p>
+                <br>
+                Even in log scale, the dropoff is incredibly steep.
+            </p>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.template" %}
+{% block title %} - Chart{% endblock %}
+{% block head %}
+    <script type="text/javascript">
+
+    $(document).ready(function(){
+        makeTable('#pokemon');
+    });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header" id="pokemon-header">
+        <h2>Pokemon</h2>
+    </div>
+    <div class="row">
+        <div class="span12">
+            {{ create_chart(rows, 'pokemon') }}
+        </div>
+    </div>
+{% endblock %}

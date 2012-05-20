@@ -1,0 +1,134 @@
+{% extends "base.template" %}
+{% block title %} - FAQ{% endblock %}
+{% block head %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header" id="faq">
+        <h3>FAQ</h3>
+    </div>
+
+    {% call faq('Dear God, WHY?') %}
+       <p>
+            Because <em>data is delicious.</em>
+        </p>
+    {% endcall %}
+
+    {% call faq('How did you do this?') %}
+       <p>
+            It's all done in Python.<br>
+            A little script fetches all the data from the sites, results are parsed out, and a page is generated.
+            The source is even <a href="https://github.com/interrostat/pokestats">on Github</a> for your perusal.
+            I'd like to provide specific thanks to <a href="https://github.com/veekun/pokedex">veekun/pokedex</a>, for having such handy data files,
+            and <a href="http://jinja.pocoo.org/docs/">jinja2</a>, for making templating easy
+        </p>
+    {% endcall %}
+
+    {% call faq('Can I help?') %}
+       <p>
+            Absolutely!<br>
+            Most of the site was automatically generated, so not too much manual effort goes into making it.
+        <p>
+            But the tagging is <b>miserable</b> on some of these posts.
+            If you can improve them, that'd be the best, both for me and for the users of the boards themselves.<br>
+            If you'd rather help with code, the source is on <a href="https://github.com/interrostat">Github</a>, and the most complicated function - by far - is tag analysis.
+            Got ideas? Bring them up there or <a href="https://twitter.com/interrostat">on twitter</a>! I'd be happy to take pull requests and discussions.
+        </p>
+    {% endcall %}
+
+    {% call faq('Why did you choose these sites?') %}
+       <p>
+            They're the biggest sites I could easily query. All three expose an API that makes it simple to programatically fetch all
+            the post information for a given tag, and from there I can eliminate duplicates (by cross-referencing the md5) and learn more tags.
+        </p>
+        <p>
+            <a href="http://www.e621.net/">e621.net</a> is a general-furry pornography board. While it's not focused on Pok&eacute;mon material,
+            it's sheer size and high tagging standards make it a key player in this game.
+        </p>
+        <p>
+            <a href="http://www.rule34.it/">rule34.it</a> appears to be a copy of the e621 software with content automatically pulled from multiple other rule34 boards. I'm not sure what
+            exactly it's goal is, but it had posts the others did not.
+        </p>
+        <p>
+            <a href="http://www.wildcritters.ws/">wildcritters.ws</a> and <a href="http://www.wildcritters.net/">wildcritters.net</a> supposedly specialize in cute and/or feral material. They've got a lot of Pok&eacute;mon postings, and high tagging standards, but some serious content biases. One third of it's pokemon-tagged posts involve Eevee evolutions!
+        </p>
+        <p>
+            <a href="http://rule34.xxx/">rule34.xxx</a> is the largest site on the booru.org network. It's got a <b>lot</b> of porn. Which is great for counting
+            data, but the site's tagging is extremely poor. It's a miracle that people tag the individual Pok&eacute;mon species at all.
+        </p>
+        <p>
+            Unfortunately, I don't have any data from <a href="http://rule34.paheal.net/">rule34.paheal.net</a>. It appears that the software it runs on, Shimmie,
+            has the API disabled on that site. Fetching the required data via HTML scraping would be prohibitively painful without one. Plus, they don't tag sexuality and that makes me sad.
+        </p>
+        <p>
+            If you have any other suggestions, let me know! There's contact info at the end.
+        </p>
+    {% endcall %}
+
+    {% call faq("Why don't you scrape DA / FA / Pixiv / etc?") %}
+        <p>
+            I want to!<br>
+            But it just can't be done automatically. On most of the sites that function as "primary sources", people don't have much incentive to thoroughly and consistently
+            tag images. And without tagging, there'd be no way to identify porn that belongs here.
+        </p>
+        <p>
+            On top of that, the sites being used all identify image files the same way - by md5 hash. This makes it possible to tell when multiple sites are talking about the <b>same</b>
+            image without having to download it first. Having to download everything would be incredibly expensive!
+        </p>
+    {% endcall %}
+    
+    {% call faq("What's with the sexuality charts?", id="sexuality") %}
+        <p>
+            The idea was just too great to pass up.<br>
+            They're an attempt to categorize posts based on the tagging provided.<br>
+            Each post is, if possible, categorized into one of the following buckets:
+        </p>
+        <p>
+            <b>G</b>: Bisexual/Group. These posts probably contain more than two characters, and that's as much as can be automatically determined.
+        </p>
+        <p>
+            <b>?</b>: Ambiguous/Intersex/Herm. There's nonbinary gender going on here.
+        </p>
+        <p>
+            <b>G</b>: Gay.
+        </p>
+        <p>
+            <b>M</b>: Male (solo).
+        </p>
+        <p>
+            <b>F</b>: Female (solo).
+        </p>
+        <p>
+            <b>L</b>: Lesbian. 
+        </p>
+        <p>
+            <b>m</b>: Male (inferred). The image did not have sufficient tagging to put it in any of the above categories, but had tags (ie: "penis") implying it depicts a male.
+        </p>
+        <p>
+            <b>f</b>: Female (inferred). See above.
+        </p>
+        <p>
+            <b>s</b>: Straight (inferred). The image was not directly tagged into a category, but picked up signs of both male-inferred and female-inferred. Best guess is, it's straight. Alternatively, the image was directly tagged with 'male' and 'female', but nothing to say it's 'straight' or 'group' or 'ambiguous'.
+        </p>
+    {% endcall %}
+    {% call faq("Can I access the data from this?") %}
+        <p>
+            Absolutely! The post-tag-combining data is available <a href="/combined_data.json">as a JSON file</a>.<br>
+            Do let me know if you do anything interesting with it!
+        </p>
+    {% endcall %}
+    {% call faq("Your numbers aren't right!") %}
+        <p>
+            The counts often don't quite match what shows up when you click the links. There's a couple reasons for this:
+            <ul>
+                <li>The searches on e621.net and wildcritters.ws use the -rating:safe filter, to exclude non-porn posts. On their site, the total counts seem to be
+                both heavily cached and not always for exactly what the search query was. Trust the number of pages more than the sidebar.
+                </li>
+                <li>Additionally, the boards support parent/child post relationships for slight variations on an image, and I'm honestly not sure how that
+                shows up in the data. They might not all show up, but I didn't actually check for that.
+                </li>
+            </ul>
+            If you find another source of error, let me know! I'd be glad to fix it.
+        </p>
+    {% endcall %}
+{% endblock %}

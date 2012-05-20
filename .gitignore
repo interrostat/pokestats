@@ -3,8 +3,11 @@
 *.json
 venv
 interrostat
-tables.html
+html/*.html
+mlp/*.html
 csv
+tmp
+
 
 
 # Packages

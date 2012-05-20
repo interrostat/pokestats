@@ -1,0 +1,263 @@
+{% extends "base.template" %}
+{% block title %} - FAQ{% endblock %}
+{% block head %}
+    <script type="text/javascript">
+
+$(document).ready(function(){
+    $('.boxchart')
+        .css('visibility', 'visible')
+        .sparkline('html', {
+            type: 'box',
+            width: '60em',
+            height: '1em',
+            chartRangeMin: 0,
+            chartRangeMax: {{ scale_max }},
+            outlierFillColor: '#ccc'
+        });
+   
+    $('a[data-toggle="tab"]').on('shown', function() {
+        $.sparkline_display_visible();
+    });
+
+    $(document).ready(function(){
+        makeTable('#pokemon-gay,#pokemon-straight,#pokemon-lesbian,#pokemon-group,#pokemon-ambiguous,#pokemon-male,#pokemon-female', true);
+        makeTable('#pokemon-delta');
+        makeTable('#pokemon-pairings', 'pair');
+        makeTable('#pokemon-triples', 'triple');
+    });
+});
+</script>
+{% endblock %}
+
+{% macro breakdown(key, table_name, column_header) -%}
+    <div id="chart_{{ key }}" class="page-header"><h4>{{ table_name }}</h4></div>
+    <table id="{{ key }}" class="table table-condensed">
+    <thead>
+        <tr>
+            <th>Median Result</th>
+            <th>Low Result</th>
+            <th>High Result</th>
+            <th>{{ column_header }}</th>
+            <th>Distribution</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for median_count, counts, key in breakdowns[key] %}
+        <tr>
+            <td>{{ score(median_count) }}</td>
+            <td>{{ score(min(counts)) }}</td>
+            <td>{{ score(max(counts)) }}</td>
+            <td>{{ key }}</td>
+            <td><span class="boxchart" style="visibility: hidden">{{ counts|join(',') }}</span></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+{%- endmacro %}
+
+{% block content %}
+
+<div class="row">
+    <div class="span12 tabbable tabs-left">
+        <ul class="nav nav-tabs nav-stacked">
+            <li><h4>Pokemon Information</h4></li>
+            <li><a href="#by-type" data-toggle="tab">Popularity by Type</a></li>
+            <li><a href="#by-generation" data-toggle="tab">Popularity by Generation</a></li>
+            <li><a href="#by-stage" data-toggle="tab">Popularity by Evolution Stage</a></li>
+            <li><a href="#by-stats" data-toggle="tab">Popularity by Stat Percentile</a></li>
+            <li><h4>Sexualities</h4></li>
+            <li><a href="#most-gay" data-toggle="tab">25 Most Gay</a></li>
+            <li><a href="#most-straight" data-toggle="tab">25 Most Straight</a></li>
+            <li><a href="#most-lesbian" data-toggle="tab">25 Most Lesbian</a></li>
+            <li><a href="#most-bisexual" data-toggle="tab">25 Most Bisexual/Group</a></li>
+            <li><a href="#most-ambiguous" data-toggle="tab">25 Most Ambiguous</a></li>
+            <li><a href="#most-male" data-toggle="tab">25 Most Male</a></li>
+            <li><a href="#most-female" data-toggle="tab">25 Most Female</a></li>
+            <li><h4>Other</h4></li>
+            <li><a href="#this-month" data-toggle="tab">Popular This Month</a></li>
+            <li><a href="#top-pairings" data-toggle="tab">Top Two-Pok&eacute;mon Pairings</a></li>
+            <li><a href="#top-triples" data-toggle="tab">Top Three-Pok&eacute;mon Triples</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="by-type" class="tab-pane active">
+                {{ breakdown('type', 'By Type', 'Type') }}
+                 <br><br>
+                <p>
+                   It's not surprising that Rock and Bug types aren't very popular. But can anyone explain why Fire types have the most pornography, <b>and</b> the most even distribution?
+                </p>
+            </div>
+            <div id="by-generation" class="tab-pane fade">
+                {{ breakdown('generation', 'By Generation', 'Generation') }}
+                 <br><br>
+                <p>
+                    It appears that people don't like Generation III - if it wasn't in the bottom spot, the list would be linear!
+                </p>
+            </div>
+            <div id="by-stage" class="tab-pane fade">
+                {{ breakdown('stage', 'By Evolution Stage', 'Stage') }}
+                 <br><br>
+                <p>
+                    <b>Nobody</b> likes baby form Pokemon, it appears. Pichu and Riolu are the only ones keeping the chart visible.
+                </p>
+            </div>
+            <div id="by-stats" class="tab-pane fade">
+                {{ breakdown('stat_percentile', 'By Stat Percentile', 'Percentile') }}
+                 <br><br>
+                <p>
+                    More powerful Pok&eacute;mon are generally more attractive, with a blip corresponding to basic-forms, particularly the ever-popular starters.
+                </p>
+            </div>
+
+
+            <div id="most-gay" class="tab-pane fade">
+                <br>
+                {{ create_chart(top_25(rows, 'gay'), 'pokemon-gay', show_sites=False) }}
+                <br><br>
+                <p>
+                    There's a very clear trend towards lizards and dinosaurs in the Gay bracket, starting with Feraligatr and continuing right on down.
+                </p>
+                <p>
+                    The list is also nearly half starters, which is also evident in the Most Male rankings.
+                </p>
+            </div>
+
+            <div id="most-straight" class="tab-pane fade">
+                <br>
+                {{ create_chart(top_25(rows, 'straight'), 'pokemon-straight', show_sites=False) }}
+                <br><br>
+                <p>
+                    Meloetta's top spot in the Straight category appears to primarily be the work of one user. It doesn't take much!
+                </p>
+            </div>
+
+            <div id="most-lesbian" class="tab-pane fade">
+                <br>
+                {{ create_chart(top_25(rows, 'lesbian'), 'pokemon-lesbian', show_sites=False) }}
+                <br><br>
+                <p>
+                    The gap between the rates of lesbian and gay works is staggering. Take a moment and compare the two.
+                </p>
+                 <p>
+                    In fact, the rates are so low that the top spots seem to be mostly differentiated by rounding error.
+                </p>
+            </div>
+
+            <div id="most-bisexual" class="tab-pane fade">
+                <br>
+                {{ create_chart(top_25(rows, 'group'), 'pokemon-group', show_sites=False) }}
+                <br><br>
+                <p>
+                    It appears that Water and Electric type Pok&eacute;mon are predisposed towards getting into orgies.
+                </p>
+            </div>
+
+            <div id="most-ambiguous" class="tab-pane fade">
+                <br>
+                {{ create_chart(top_25(rows, 'ambiguous'), 'pokemon-ambiguous', show_sites=False) }}
+                <br><br>
+                <p>
+                    No clue what's going on here. Of the entries with high total counts, Mewtwo makes thematic sense ranking highly in this category, but there seems to be no pattern explaining the others.
+                </p>
+            </div>
+
+            <div id="most-male" class="tab-pane fade">
+                <br>
+                {{ create_chart(top_25(rows, 'allmale'), 'pokemon-male', show_sites=False) }}
+                <br><br>
+                <p>
+                    Note that the "Most Male" chart represents counts all forms of appearances involving males, by including straight and gay works.
+                </p>
+                <p>
+                    The Generation 5 Djinn Pok&eacute;mon take on a strong position here. It's noteworthy that 9 starter Pok&eacute;mon show up in the top 25 here.
+                </p>
+            </div>
+
+            <div id="most-female" class="tab-pane fade">
+                <br>
+                {{ create_chart(top_25(rows, 'allfemale'), 'pokemon-female', show_sites=False) }}
+                <br><br>
+                <p>
+                    Note that the "Most Female" chart represents counts all forms of appearances involving females, by including straight and lesbian works.
+                </p>
+                <p>
+                    In the games, Blaziken appears predominantly male, but appears to have taken on quite a female-biased representation in the world of porn.
+                </p>
+            </div>
+
+
+            <div id="this-month" class="tab-pane fade">
+                <br>
+                {{ create_chart(delta_rows[:25], 'pokemon-delta', min_size=0.1, data_label="This Month") }}
+                <br><br>
+                <p>
+                    <a href="http://haycheladult.tumblr.com/">Haychel</a>'s thirty-two page Charmander/Ampharos comic has single-handedly dominated the charts
+                    of porn between April and May. Congratulations!
+                </p>
+            </div>
+
+            <div id="top-pairings" class="tab-pane fade">
+                <table id="pokemon-pairings" class="table table-striped table-condensed">
+                    <thead>
+                        <tr>
+                            <th><div class="vertical-text">Rank</div></th>
+                            <th><div class="vertical-text">Rating</div></th>
+
+                            <th><div class="vertical-text">Pairing A</div></th>
+                            <th><div class="vertical-text">Pairing B</div></th>
+
+                            {{ sexuality_header() }}
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in top_pairs %}
+                        <tr>
+                            <td>{{ loop.index }}.</td>
+                            <td>{{ score(row.interest_score) }}</td>
+
+                            <td><a href="http://bulbapedia.bulbagarden.net/wiki/{{ quote(official_names[row.first]) }}_%28Pok%C3%A9mon%29">{{ official_names[row.first] }}</a></td>
+                            <td><a href="http://bulbapedia.bulbagarden.net/wiki/{{ quote(official_names[row.second]) }}_%28Pok%C3%A9mon%29">{{ official_names[row.second] }}</a></td>
+
+                        {{ analyze_sexuality(row, min_size=0.25) }}
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="top-triples" class="tab-pane fade">
+                <table id="pokemon-triples" class="table table-striped table-condensed">
+                    <thead>
+                        <tr>
+                            <th><div class="vertical-text">Rank</div></th>
+                            <th><div class="vertical-text">Rating</div></th>
+
+                            <th><div class="vertical-text">Pairing A</div></th>
+                            <th><div class="vertical-text">Pairing B</div></th>
+                            <th><div class="vertical-text">Pairing C</div></th>
+
+                            {{ sexuality_header() }}
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in top_triples %}
+                        <tr>
+                            <td>{{ loop.index }}.</td>
+                            <td>{{ score(row.interest_score) }}</td>
+
+                            <td><a href="http://bulbapedia.bulbagarden.net/wiki/{{ quote(official_names[row.first]) }}_%28Pok%C3%A9mon%29">{{ official_names[row.first] }}</a></td>
+                            <td><a href="http://bulbapedia.bulbagarden.net/wiki/{{ quote(official_names[row.second]) }}_%28Pok%C3%A9mon%29">{{ official_names[row.second] }}</a></td>
+                            <td><a href="http://bulbapedia.bulbagarden.net/wiki/{{ quote(official_names[row.third]) }}_%28Pok%C3%A9mon%29">{{ official_names[row.third] }}</a></td>
+
+                        {{ analyze_sexuality(row, min_size=0.25) }}
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
