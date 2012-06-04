@@ -10,9 +10,7 @@ import cPickle as pickle
 import csv
 import json
 import xml.dom.minidom
-from operator import itemgetter
-import itertools
-import collections
+
 
 #load a bunch of data files
 #csv's helpfully provided by the veekun/pokedex project.
@@ -75,89 +73,11 @@ for pokemon_id,stat_id,base_stat,effort in list(csv.reader(open('csv/pokemon_sta
 
 stat_list = sorted(pokemon_stats.values())
 #--
-class site(object):
-	translations = {
-		'nidoranf': 'nidoran%E2%99%80',
-		'nidoranm': 'nidoran%E2%99%82',
-		'hooh': 'ho-oh',
-		'farfetchd': "farfetch'd",
-		'mrmime': 'mr._mime',
-		'mimejr': 'mime_jr.',
-		'porygonz': 'porygon-z',
-	}
-	def __init__(self):
-		self.pokemon_counts = {}
-		self.total_count = 0
-
-	def translate(self, term):
-		#Turn a name into a URL term
-		#and fixup any site-specific peculiarities
-		if term in self.translations:
-			return self.translations[term]
-		return urllib2.quote(term)
-
-	def get_url(self, term):
-		return self.url % self.translate(term)
-
-	def get_api_url(self, term, page):
-		return self.api_url % (self.translate(term), page)
-
-	def crawl(self, term):
-		rows = []
-		page = 0
-		while True:
-			page += 1
-			data = urllib2.urlopen(self.get_api_url(term, page)).read()
-			data = json.loads(data)
-			rows.extend(data)
-			if len(data) < 100:
-				#incomplete page means the last page
-				break
-		return rows
-
-
-
-
-class e621(site):
-	api_url = 'http://e621.net/post/index.json?tags=%s+-rating:safe&limit=100&page=%i'
-	url = 'http://e621.net/post?tags=%s+-rating:safe'
-
-class wildcritters(site):
-	api_url = 'http://wildcritters.ws/post/index.json?tags=%s+-rating:safe&limit=100&page=%i'
-	url = 'http://wildcritters.ws/post?tags=%s+-rating:safe'
-
-class wildcrittersnet(site):
-	api_url = 'http://wildcritters.net/wc/post/index.json?tags=%s+-rating:safe&limit=100&page=%i'
-	url = 'http://wildcritters.net/wc/post?tags=%s+-rating:safe'
-
-class rule34it(site):
-	api_url = 'http://rule34.it/post/index.json?tags=%s+-rating:safe&limit=100&page=%i'
-	url = 'http://rule34.it/post?tags=%s+-rating:safe'
-
-class rule34(site):
-	api_url = 'http://rule34.xxx/index.php?page=dapi&s=post&q=index&tags=%s&pid=%i'
-	url = 'http://rule34.xxx/index.php?page=post&s=list&tags=%s'
-
-	def crawl(self, term):
-		rows = []
-		page = -1 #start page is 0, not 1!
-		while True:
-			page += 1
-			data = urllib2.urlopen(self.get_api_url(term, page)).read()
-			data = xml.dom.minidom.parseString(data)
-			data = data.getElementsByTagName('post')
-			for post in data:
-				rows.append(
-					{ name:attr.value for (name,attr) in post._attrs.items() }
-				)
-			if len(data) < 100:
-				#incomplete page means the last page
-				break
-		return rows
+from common import *
 
 sites = dict(
 	e621=e621(),
-	rule34it=rule34it(),
+	paheal=paheal(),
 	wildcritters=wildcritters(),
 	wildcrittersnet=wildcrittersnet(),
 	rule34=rule34(),
@@ -165,164 +85,6 @@ sites = dict(
 site_list = sites.values()
 #--
 
-
-
-def median(values):
-	v = sorted(values)
-	half = len(v)/2
-	if len(v) % 2:
-		return v[half]
-	return (v[half]+v[half+1])/2
-
-genderless_tags = {}
-
-def analyze_ratios(posts):
-
-	#It was not until this day
-	#that I'd ever expect to find myself writing an algorithm for categorizing sexuality ratios by tag presence.
-	#worse, tagging standards are so inconsistent, both across and within sites, that this is basically
-	#a messy heurestic.
-	#I expect that if anybody starts bikeshedding about my data, it's going to be about this.
-	
-	#let it be known that the wisdom of the crowd sucks.
-
-	ratios = dict([(category, 0) for category in 
-		(
-		#it's impossible to distinguish 'bisexual' and 'group' from each other, so we merge them
-		'group',
-		#herms, intersex, etc all go in here because it's impossible to be more fine-grained than that
-		'ambiguous',
-		#we subdivide these groups by whether or not they were directly tagged
-		'gay', 'male', 'straight', 'female', 'lesbian',
-		#or a category was inferred (at which point we can't tell solo from pair if the genders are the same)
-		'weakmale', 'weakstraight', 'weakfemale',
-		#and unfortunately that's still nowhere near everything
-		'unknown'
-	)])
-
-	#some sites use name, some sites use pairing flags! everybody's different!
-
-	group_tags = set(('group', 'group_sex', 'bisexual', 'threesome', 'foursome'))
-	straight_tags = set(('straight', 'm/f'))
-	gay_tags = set(('gay', 'm/m', '2boys'))
-	lesbian_tags = set(('lesbian', 'f/f', '2girls'))
-
-	#some sites even use unicode!
-	ambiguous_tags = set(('ambiguous', 'ambiguous_gender', 'herm', 'intersex', 'dickgirl', 'futanari', 'futa'))
-	male_tags = set(('male', u'\u2642', '1boy'))
-	female_tags = set(('female', u'\u2640', '1girl'))
-
-	weak_male_tags = set(('penis', 'yaoi', 'fellatio', 'handjob'))
-	weak_female_tags = set(('vagina', 'yuri', 'pussy', 'breasts', 'nipples', 'cunnilingus', 'clitoris'))
-
-	for post_tags, post_sites in posts.values():
-		#unfortunately, this is so complicated we have to loop over _EVERY TAG_ to make an informed guess.
-
-		straight_match = gay_match = lesbian_match = male_match = female_match = ambiguous_match = False
-		group_match = ambiguous_match = weak_male_match = weak_female_match = False
-
-		for tag in post_tags:
-			if tag in group_tags:
-				group_match = True
-				#group is a bit special - when we find it, we _actually_ know we're done.
-				#the category can't change anymore
-				break
-			elif tag in straight_tags: straight_match = True
-			elif tag in gay_tags: gay_match = True
-			elif tag in lesbian_tags: lesbian_match = True
-
-			elif tag in ambiguous_tags: ambiguous_match = True
-			elif tag in male_tags: male_match = True
-			elif tag in female_tags: female_match = True
-
-			elif tag in weak_male_tags: weak_male_match = True
-			elif tag in weak_female_tags: weak_female_match = True
-
-			else:
-				#still nothing? now we perform the more expensive checks
-				
-				#r34 uses tags like '3girls' sometimes
-				if 'boys' in tag: gay_match = True
-				elif 'girls' in tag: lesbian_match = True
-				#sometimes people use weird tags like 'long_penis' and nothing else!
-				elif 'penis' in tag: weak_male_match = True
-				#sometimes people tag 'vaginal_penetration' without 'vagina'!
-				elif 'vagina' in tag: weak_female_match = True
-
-				#wc uses tags like 'm/m/f' sometimes
-				elif tag.count('/') > 1:
-					if '/?' in tag or '?/' in tag:
-						ambiguous_match = True
-					else:
-						group_match = True
-						break
-		
-		#only now can we figure out what bucket to put this in
-
-		#gay+straight, etc is considered 'bi/group' here.
-		if sum((straight_match, gay_match, lesbian_match)) > 1:
-			group_match = True
-
-		if group_match:
-			ratios['group'] += 1
-		elif straight_match:
-			ratios['straight'] += 1
-		elif gay_match:
-			ratios['gay'] += 1
-		elif lesbian_match:
-			ratios['lesbian'] += 1
-
-		elif ambiguous_match:
-			ratios['ambiguous'] += 1
-		elif male_match and female_match:
-			#sigh. this is a bad place to be in.
-			#it's probably a poorly tagged 'straight'. Could also be a herm.
-			#let's hope the 'solo' tag exists, at least
-			if 'solo' in post_tags:
-				ratios['ambiguous'] += 1
-			else:
-				ratios['weakstraight'] += 1
-
-		elif male_match:
-			ratios['male'] += 1
-		elif female_match:
-			ratios['female'] += 1
-
-		elif weak_male_match and weak_female_match:
-			ratios['weakstraight'] += 1
-		elif weak_male_match:
-			ratios['weakmale'] += 1
-		elif weak_female_match:
-			ratios['weakfemale'] += 1
-
-		else:
-			ratios['unknown'] += 1
-
-	#divisor here is the target width of the ratio chart
-	total_size = float(max(1, sum([v for k,v in ratios.items() if k != 'unknown']))) / 100
-	all_size = float(max(1, len(posts)))
-	ratios.update(
-		total_size = total_size,
-		all_size = all_size,
-	)
-
-	return ratios
-
-def top_25(rows, ratio_key, min_size=0.25):
-	def key(row):
-		ratios = row['ratios']
-		if ratios['unknown'] / ratios['all_size'] < 0.9 and ratios['total_size'] >= min_size:
-			if ratio_key == 'allmale':
-				return (ratios['weakstraight'] + ratios['straight'] + ratios['male'] + ratios['weakmale'] + ratios['gay']) / ratios['total_size']
-			if ratio_key == 'allfemale':
-				return (ratios['weakstraight'] + ratios['straight'] + ratios['female'] + ratios['weakfemale'] + ratios['lesbian']) / ratios['total_size']
-			if ratio_key == 'straight':
-				return (ratios['weakstraight'] + ratios['straight']) / ratios['total_size']
-			return ratios[ratio_key] / ratios['total_size']
-
-		return 0
-
-	return sorted(rows, key=key, reverse=True)[:25]
 
 def debug_tags(number):
 	data = all_data[number]
@@ -334,12 +96,6 @@ def debug_tags(number):
 
 	ordered = sorted([(v,k) for k,v in frequencies.items()])
 	return ordered
-	
-class SetEncoder(json.JSONEncoder):
-	def default(self, obj):
-		if isinstance(obj, set):
-			return list(obj)
-		return json.JSONEncoder.default(self, obj)
 
 if __name__ == '__main__':
 	if 'fetch' in sys.argv:
@@ -402,7 +158,11 @@ if __name__ == '__main__':
 		print 'Loading data'
 		(all_data, site_counts) = pickle.load(open('merged.pickle'))
 		print 'Loading more data'
-		(prior_all_data, prior_site_counts) = pickle.load(open('april_12/merged.pickle'))
+		prior_data = json.load(open('may_data/combined_data.json'))
+		(prior_all_data, prior_site_counts) = prior_data['files'], prior_data['site_counts']
+		#one problem is that the json data strings the keys
+		for key in prior_all_data.keys():
+			prior_all_data[int(key)] = prior_all_data[key]
 
 		delta_site_counts = dict([(site_name, dict()) for site_name in sites.keys()])
 
@@ -435,10 +195,7 @@ if __name__ == '__main__':
 						for site_name in site:
 							delta_site_counts[site_name][number].add(md5)
 
-		#For each pokemon, generate an "Interest Score" using the following method:
-		#Take the number of hits across all sites,
-		#then scale relative to the median value (which will become '100%')
-		#This expresses the pokemon's value as a percentage-of-the-median.
+		#find the total score and store it in various places
 		for number, name in pokemon:
 			interest_score = float(len(all_data[number]))
 			interest_map[number] = interest_score

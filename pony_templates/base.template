@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pok&eacute;stats{% block title %}{% endblock %}</title>
+    <title>Ponystats{% block title %}{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script type="text/javascript" charset="utf8" src="js/jquery-1.7.1.min.js"></script>
@@ -165,17 +164,13 @@ th span.sortoptions { font-weight: normal; }
             {% if show_sites %}
                 <th><div class="vertical-text">e621.net</div></th>
                 <th><div class="vertical-text">wildcritters.ws</div></th>
-                <th><div class="vertical-text">wildcritters.net</div></th>
-                <th><div class="vertical-text">rule34.paheal.net</div></th>
                 <th><div class="vertical-text">rule34.xxx</div></th>
+                <th><div class="vertical-text">rule34.paheal.net</div></th>
+                <th><div class="vertical-text">ponibooru.org</div></th>
             {% endif %}
-                <th><div class="vertical-text">Generation</th>
-                <th><div class="vertical-text">Number</div></th>
                 <th><div class="vertical-text">Name</div></th>
-
-                <th><div class="vertical-text">Type1</div></th>
-                <th><div class="vertical-text">Type2</div></th>
-                <th><div class="vertical-text">Stage</div></th>
+                <th><div class="vertical-text">Gender</th>
+                <th><div class="vertical-text">Kind</div></th>
 
                 {{ sexuality_header() }}
             </tr>
@@ -184,20 +179,17 @@ th span.sortoptions { font-weight: normal; }
         {% for row in source %}
             <tr>
                 <td>{{ loop.index }}.</td>
-                <td>{{ score(row.interest_score) }}</td>
+                <td>{{ score(row.total_count) }}</td>
             {% if show_sites %}
-                <td><a href="{{ sites.e621.get_url(row.name) }}">{{ row.e621 }}</a></td>
-                <td><a href="{{ sites.wildcritters.get_url(row.name) }}">{{ row.wildcritters }}</a></td>
-                <td><a href="{{ sites.wildcrittersnet.get_url(row.name) }}">{{ row.wildcrittersnet }}</a></td>
-                <td><a href="{{ sites.paheal.get_url(row.name) }}">{{ row.paheal }}</a></td>
-                <td><a href="{{ sites.rule34.get_url(row.name) }}">{{ row.rule34 }}</a></td>
+                <td><a href="{{ url_for(row, 'e621net') }}">{{ row.e621net }}</a></td>
+                <td><a href="{{ url_for(row, 'wildcrittersws') }}">{{ row.wildcrittersws }}</a></td>
+                <td><a href="{{ url_for(row, 'rule34xxx') }}">{{ row.rule34xxx }}</a></td>
+                <td><a href="{{ url_for(row, 'paheal') }}">{{ row.paheal }}</a></td>
+                <td><a href="{{ url_for(row, 'ponibooru') }}">{{ row.ponibooru }}</a></td>
             {% endif %}
-                <td>{{ row.generation }}</td>
-                <td>#{{ row.number }}</td>
-                <td><a href="http://bulbapedia.bulbagarden.net/wiki/{{ quote(official_names[row.number]) }}_%28Pok%C3%A9mon%29">{{ official_names[row.number] }}</a></td>
-                <td>{{ row.type1 }}</td>
-                <td>{{ row.type2 }}</td>
-                <td>{{ row.stage }}</td>
+                <td><a href="http://mlp.wikia.com/wiki/{{ quote(row.primary_name) }}">{{ row.name }}</a></td>
+                <td>{{ row.gender }}</td>
+                <td>{{ row.kind }}</td>
 
             {{ analyze_sexuality(row, min_size) }}
 
@@ -211,20 +203,20 @@ th span.sortoptions { font-weight: normal; }
     <div class="navbar" style="margin-bottom: 0">
         <div class="navbar-inner">
             <ul class="nav pull-left">
-                <li><a href="index.html">Pok&eacute;stats!</a></li>
+                <li><a href="index.html">Ponystats!</a></li>
             </ul>
             <div class="container">
                     
                 <ul class="nav">
-                    <li><a href="breakdowns.html">Information Breakdowns</a></li>
+                    <li><a href="breakdowns.html">Sexualities &amp; Pairings</a></li>
                 
                     <li class="divider-vertical"></li>
-
-                    <li><a href="linecharts.html">Line Charts</a></li>
                     
+                    <li><a href="charts.html">Categorized Charts</a></li>
+
                     <li class="divider-vertical"></li>
                     
-                    <li><a href="chart.html#pokemon-header">The Big Chart</a></li>
+                    <li><a href="chart.html">The Big Chart</a></li>
 
                 </ul>
                 <ul class="nav pull-right">
@@ -236,9 +228,9 @@ th span.sortoptions { font-weight: normal; }
     </div>
     <div id="start"></div>
 
-    <div class="hero-unit alert information" style="background-color: #D9EDF7; border-color: #BCE8F1; color: #3A87AD;">
-        <h1 style="text-align: center">Pok&eacute;stats!</h1>
-        <h3 style="text-align: center">There's <i>how much</i> of <i>WHAT</i> on the Internet?</h3>
+    <div class="hero-unit alert information" style="background-color: #EACCDB; border-color: #EDB1CF; color: black;">
+        <h1 style="text-align: center">Ponystats! <sup style="font-size: 33%; top: -1.5em">(beta)</sup></h1>
+        <h3 style="text-align: center">Who's the porniest pony of them all?</h3>
     </div>
 
     {% block content %}
@@ -253,12 +245,13 @@ th span.sortoptions { font-weight: normal; }
         </div>
         <div class="span9">
             <p>
-                This site was built by Interrostat.
+                This site was built by Interrostat.<br>
+                Contact Information:
                 <address>
-                    <strong>Twitter</strong>
-                    <a href="https://twitter.com/interrostat">@interrostat</a><br>
-                    <strong>Github</strong>
-                    <a href="https://github.com/interrostat">interrostat</a>
+                    <strong>Twitter:</strong> <a href="https://twitter.com/interrostat">@interrostat</a>
+                    <strong>Reddit:</strong> <a href="http://www.reddit.com/user/interrostat/">interrostat</a><br>
+                    <strong>Github:</strong> <a href="https://github.com/interrostat">interrostat</a>
+                    <strong>Tumblr:</strong> <a href="http://interrostat.tumblr.com/">interrostat</a><br>
                 </address>
             </p>
         </div>

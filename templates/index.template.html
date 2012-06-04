@@ -1,7 +1,8 @@
 {% extends "base.template" %}
 {% block content %}
-    {% call faq('What is this?') %}
-       <p>
+<div class="row-fluid offset1">
+    <div class="span8">
+        <p>
             There's a lot of porn on the internet. Some of that porn goes to sites that ritually tag it with huge amounts of
             metadata. And while many people use those tags to help find exactly the thing that floats their boat, that's not the
             only thing you can do with metadata.
@@ -25,5 +26,10 @@
         <p>
             Perhaps you're just interested in seeing the distribution, visually, as <a href="linecharts.html">a line chart</a>. That can be done, too!
         </p>
-    {% endcall %}
+    </div>
+    <div class="span2 hero-unit" style="background-color: #EACCDB; border-color: #EDB1CF; color: black; text-align: center">
+        <h3>More interested in My Little Pony?</h3><br>
+        <a href="/mlp/index.html">Check out the Ponystats</a>!
+    </div>
+</div>
 {% endblock %}

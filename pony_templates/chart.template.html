@@ -1,0 +1,21 @@
+{% extends "base.template" %}
+{% block title %} - Combined Chart{% endblock %}
+{% block head %}
+    <script type="text/javascript">
+
+    $(document).ready(function(){
+        makeTable('#pony-chart');
+    });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header" id="pony-header">
+        <h2>All Ponies</h2>
+    </div>
+    <div class="row">
+        <div class="span12">
+            {{ create_chart(rows, 'pony-chart') }}
+        </div>
+    </div>
+{% endblock %}

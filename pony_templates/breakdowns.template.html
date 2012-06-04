@@ -1,0 +1,228 @@
+{% extends "base.template" %}
+{% block title %} - FAQ{% endblock %}
+{% block head %}
+    <script type="text/javascript">
+
+$(document).ready(function(){
+    makeTable('#chart-gay,#chart-straight,#chart-lesbian,#chart-group,#chart-ambiguous,#chart-male,#chart-female', true);
+    makeTable('#chart-delta');
+    makeTable('#chart-pairings', 'pair');
+    makeTable('#chart-triples', 'triple');
+});
+</script>
+{% endblock %}
+
+{% macro breakdown(key, table_name, column_header) -%}
+    <div id="chart_{{ key }}" class="page-header"><h4>{{ table_name }}</h4></div>
+    <table id="{{ key }}" class="table table-condensed">
+    <thead>
+        <tr>
+            <th>Median Result</th>
+            <th>Low Result</th>
+            <th>High Result</th>
+            <th>{{ column_header }}</th>
+            <th>Distribution</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for median_count, counts, key in breakdowns[key] %}
+        <tr>
+            <td>{{ score(median_count) }}</td>
+            <td>{{ score(min(counts)) }}</td>
+            <td>{{ score(max(counts)) }}</td>
+            <td>{{ key }}</td>
+            <td><span class="boxchart" style="visibility: hidden">{{ counts|join(',') }}</span></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+{%- endmacro %}
+
+{% block content %}
+
+<div class="row">
+    <div class="span tabbable tabs-left" style="width: 1200px">
+        <ul class="nav nav-tabs nav-stacked">
+            <li><h4>Sexualities</h4></li>
+            <li><a href="#most-gay" data-toggle="tab">25 Most Gay</a></li>
+            <li><a href="#most-straight" data-toggle="tab">25 Most Straight</a></li>
+            <li><a href="#most-lesbian" data-toggle="tab">25 Most Lesbian</a></li>
+            <li><a href="#most-bisexual" data-toggle="tab">25 Most Bisexual/Group</a></li>
+            <li><a href="#most-ambiguous" data-toggle="tab">25 Most Ambiguous</a></li>
+            <li><a href="#most-male" data-toggle="tab">25 Most Male</a></li>
+            <li><a href="#most-female" data-toggle="tab">25 Most Female</a></li>
+            <li><h4>Other</h4></li>
+            <li><a href="#top-pairings" data-toggle="tab">Top Two-Pony Pairings</a></li>
+            <li><a href="#top-triples" data-toggle="tab">Top Three-Pony Triples</a></li>
+        </ul>
+        <div class="tab-content" style="width: 1000px">
+
+            <div id="most-gay" class="tab-pane active">
+                <h3>25 Most Gay</h3>
+                <br>
+                {{ create_chart(top_25(rows, 'gay'), 'chart-gay', show_sites=False) }}
+                <br><br>
+                <p>
+                    There's not a lot of males to work with on this show, and it shows. Braeburn takes a commanding lead, probably due to his cowboy nature.
+                </p>
+            </div>
+
+            <div id="most-straight" class="tab-pane fade">
+                <h3>25 Most Straight</h3>
+                <br>
+                {{ create_chart(top_25(rows, 'straight'), 'chart-straight', show_sites=False) }}
+                <br><br>
+                <p>
+                    Shining Armor manages to steal the top spot from Spike here. 
+                </p>
+            </div>
+
+            <div id="most-lesbian" class="tab-pane fade">
+                <h3>25 Most Lesbian</h3>
+                <br>
+                {{ create_chart(top_25(rows, 'lesbian'), 'chart-lesbian', show_sites=False) }}
+                <br><br>
+                <p>
+                    With the primary gender being female in this show, Most Lesbian is an odd category. The winners seem to be the ones that rarely appear outside of a pairing.
+                </p>
+                 <p>
+                    The contrast in volume between this and the <a href="/pokemon/breakdowns.html#most-lesbian">Pok&eacute;mon</a> version are striking.
+                </p>
+            </div>
+
+            <div id="most-bisexual" class="tab-pane fade">
+                <h3>25 Most Bisexual / Group</h3>
+                <br>
+                {{ create_chart(top_25(rows, 'group'), 'chart-group', show_sites=False) }}
+                <br><br>
+                <p>
+                    When you've already included everyone you can name, call in the Royal Guard!
+                </p>
+                <p>
+                    The spa twins take the next two places, which isn't terribly surprising.
+                </p>
+            </div>
+
+            <div id="most-ambiguous" class="tab-pane fade">
+                <h3>25 Most Ambiguous / Intersex / Herm</h3>
+                <br>
+                {{ create_chart(top_25(rows, 'ambiguous'), 'chart-ambiguous', show_sites=False) }}
+                <br><br>
+                <p>
+                    This category is always hard to make sense of, by it's very nature.
+                </p>
+                <p>
+                    Fluttershy is the herm-iest of the main cast by a significant margin.
+                </p>
+            </div>
+
+            <div id="most-male" class="tab-pane fade">
+                <h3>25 Most Male</h3>
+                <br>
+                {{ create_chart(top_25(rows, 'allmale'), 'chart-male', show_sites=False) }}
+                <br><br>
+                <p>
+                    Note that the "Most Male" chart represents counts all forms of appearances involving males, by including straight and gay works.
+                </p>
+                <p>
+                    Unlike in the Pok&eacute;mon stats, this universe simply doesn't have enough males to make a "top 25" list - it's really just a top ten.
+                </p>
+            </div>
+
+            <div id="most-female" class="tab-pane fade">
+                <h3>25 Most Female</h3>
+                <br>
+                {{ create_chart(top_25(rows, 'allfemale'), 'chart-female', show_sites=False) }}
+                <br><br>
+                <p>
+                    Note that the "Most Female" chart represents counts all forms of appearances involving females, by including straight and lesbian works.
+                </p>
+                <p>
+                    As a result, this chart changes meaning to indicate ponies that rarely appear gender-shifted or in groups.
+                </p>
+            </div>
+
+            <div id="top-pairings" class="tab-pane fade">
+                <table id="chart-pairings" class="table table-striped table-condensed">
+                    <thead>
+                        <tr>
+                            <th><div class="vertical-text">Rank</div></th>
+                            <th><div class="vertical-text">Rating</div></th>
+
+                            <th><div class="vertical-text">Pairing A</div></th>
+                            <th><div class="vertical-text">Pairing B</div></th>
+
+                            {{ sexuality_header() }}
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in top_pairs %}
+                        <tr>
+                            <td>{{ loop.index }}.</td>
+                            <td>{{ score(row.total_count) }}</td>
+
+                            <td><a href="http://mlp.wikia.com/wiki/{{ quote(pony_dict[row.first].primary_name) }}">{{ pony_dict[row.first].name }}</a></td>
+                            <td><a href="http://mlp.wikia.com/wiki/{{ quote(pony_dict[row.second].primary_name) }}">{{ pony_dict[row.second].name }}</a></td>
+
+                        {{ analyze_sexuality(row, min_size=0.25) }}
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <br><br>
+                <p>
+                    The rating in the pairings table represents <b>(appearances together) * (percentage of total results for A) * (percentage of total results for B)</b><br>
+                    High-ranking entries frequently show up together and infrequently show up apart.
+                </p>
+                <p>
+                    While the tightly linked nature of the Mane Six clouds things somewhat, the Lyra / Bon Bon and Aloe / Lotus couples are quite evident.
+                </p>
+            </div>
+
+            <div id="top-triples" class="tab-pane fade">
+                <table id="chart-triples" class="table table-striped table-condensed">
+                    <thead>
+                        <tr>
+                            <th><div class="vertical-text">Rank</div></th>
+                            <th><div class="vertical-text">Rating</div></th>
+
+                            <th><div class="vertical-text">Pairing A</div></th>
+                            <th><div class="vertical-text">Pairing B</div></th>
+                            <th><div class="vertical-text">Pairing C</div></th>
+
+                            {{ sexuality_header() }}
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in top_triples %}
+                        <tr>
+                            <td>{{ loop.index }}.</td>
+                            <td>{{ score(row.total_count) }}</td>
+
+                            <td><a href="http://mlp.wikia.com/wiki/{{ quote(pony_dict[row.first].primary_name) }}">{{ pony_dict[row.first].name }}</a></td>
+                            <td><a href="http://mlp.wikia.com/wiki/{{ quote(pony_dict[row.second].primary_name) }}">{{ pony_dict[row.second].name }}</a></td>
+                            <td><a href="http://mlp.wikia.com/wiki/{{ quote(pony_dict[row.third].primary_name) }}">{{ pony_dict[row.third].name }}</a></td>
+
+                        {{ analyze_sexuality(row, min_size=0.25) }}
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <br><br>
+                <p>
+                    The rating in the triples table represents
+                    <b>(appearances together) * (percentage of total results for A) * (percentage of total results for B) * (percentage of total results for C)</b>
+                    <br>
+                    High-ranking entries frequently show up together and infrequently show up apart.
+                </p>
+                <p>
+                    The Crusaders appear to be the only triplet of note. While the formula tries to be biased against very small appearance rates, ponies that only ever show up in one image together end up getting a high score.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

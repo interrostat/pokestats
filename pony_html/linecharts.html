@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ponystats - FAQ</title>
+    <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script type="text/javascript" charset="utf8" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="js/bootstrap-tab.js"></script>
+    <script type="text/javascript" charset="utf8" src="js/jquery.dataTables.js"></script>
+    <script type="text/javascript" charset="utf8" src="js/jquery.sparkline.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="js/stats.js"></script>
+    
+    <script type="text/javascript" charset="utf8" src="js/dygraph-combined.js"></script>
+    <script type="text/javascript">
+var pokemon = ;
+var reorderings = {u'165': u'Tootsie Flute', u'133': u'Magnum', u'132': u'Mr. Turnips', u'131': u'Posey (G1)', u'130': u'Smartypants', u'137': u'Sunburst', u'136': u'Uncle Orange', u'135': u'Ursa Minor', u'134': u'Lucy Packard', u'139': u'Honey Dip', u'138': u'Spectrum', u'166': u'Smart Cookie', u'24': u'Nyx', u'25': u'Queen Chrysalis', u'26': u'Cheerilee', u'27': u'The_Wonderbolts', u'20': u'Braeburn', u'21': u'Zecora', u'22': u'Bon Bon', u'23': u'Gilda', u'160': u'Davenport', u'28': u'Nightmare Moon', u'29': u"Soarin'", u'161': u'Dainty Dove', u'0': u'Twilight Sparkle', u'4': u'Rarity', u'8': u'Spike', u'163': u'Ace', u'119': u'Star Swirl the Bearded', u'120': u'Roid Rage', u'121': u'Philomena', u'122': u'Aunt Orange', u'123': u'Written Script', u'124': u'Sparkler (G1)', u'125': u'Shady (G1)', u'126': u'Picture Perfect', u'127': u'Noteworthy', u'128': u'Love Letter', u'129': u'Featherweight', u'167': u'Matilda', u'118': u'Wind Whistler', u'59': u'Angel', u'58': u'Mr. Carrot Cake', u'55': u'Dinky Doo', u'54': u'Diamond Tiara', u'57': u'Silver Spoon', u'56': u'Golden Harvest', u'51': u'Shining Armor', u'50': u'Flitter', u'53': u'Colgate', u'52': u'Prince Blueblood', u'164': u'Upper Crust', u'115': u'Pokey Pierce', u'114': u'Promontory', u'88': u"Pinkie Pie's Sisters", u'89': u'Night Light', u'111': u'Shadowbolts', u'110': u'Bloomberg', u'113': u'Twilight Velvet', u'112': u'Cranky Doodle Donkey', u'82': u'Parasprite', u'83': u'Cherry Jubilee', u'80': u'Romana', u'81': u'Little Strongheart', u'86': u'Neon Lights', u'87': u'Fancypants', u'84': u'Steven Magnet', u'85': u'Opalescence', u'3': u'Fluttershy', u'7': u'Princess Celestia', u'108': u'Maplejack', u'109': u'Blues', u'102': u'Cloud Kicker', u'103': u'Tom', u'100': u'Screwball', u'101': u'Pound Cake', u'106': u'Caesar', u'107': u'Owlowiscious', u'104': u'Star Sparkle (G1)', u'105': u'Daisy', u'39': u'Princess Cadence', u'38': u'Mrs. Cup Cake', u'33': u'Cutie Mark Crusaders', u'32': u'Berry Punch', u'31': u'Daring Do', u'30': u'Aloe', u'37': u'Fleur de Lis', u'36': u'Snails', u'35': u'Lotus', u'34': u'Mayor', u'60': u'Winona', u'61': u'Lauren Faust', u'62': u'Hoity Toity', u'63': u'Granny Smith', u'64': u'Cloudchaser', u'65': u'Iron Will', u'66': u'Inkie Pie', u'67': u'Rose', u'68': u'Doctor Whooves', u'69': u'Berry Pinch', u'172': u'Chancellor Puddinghead', u'171': u'Chief Thunderhooves', u'170': u'Commander Hurricane', u'2': u'Pinkie Pie', u'162': u'Comet Tail', u'6': u'Princess Luna', u'99': u'Dumb-Bell', u'98': u'Lickety Split', u'168': u'Frederic Horseshoepin', u'169': u'Dizzy Twister', u'91': u'Cockatrice', u'90': u'Mane Six', u'93': u'Thunderlane', u'92': u'Allie Way', u'95': u'Rover', u'94': u'Sapphire Shores', u'97': u'Pumpkin Cake', u'96': u'Raindrops', u'11': u'Derpy', u'10': u'Big Macintosh', u'13': u'The Great and Powerful Trixie', u'12': u'Scootaloo', u'15': u'Apple Bloom', u'14': u'Sweetie Belle', u'17': u'Vinyl Scratch', u'16': u'Octavia', u'19': u'Discord', u'18': u'Spitfire', u'117': u'Firefly', u'116': u'Tank', u'151': u'Sue / Roxy', u'150': u'Ursa Major', u'153': u'Private Pansy', u'152': u'Rockey', u'155': u'Prairie Tune', u'154': u'Princess Platinum', u'157': u'Golden Delicious', u'156': u'Happy Trails', u'159': u'Fire Streak', u'158': u'Flim Flam Brothers', u'48': u'Photo Finish', u'49': u'Nurse Redheart', u'46': u'Blossomforth', u'47': u'Royal Guards', u'44': u'Gummy', u'45': u'Pipsqueak', u'42': u'Twist', u'43': u"Rarity's Mom (Pearl)", u'40': u'Caramel', u'41': u'Orion', u'1': u'Rainbow Dash', u'5': u'Applejack', u'9': u'Lyra Heartstrings', u'146': u'Madame Le Floure', u'147': u'Junebug', u'144': u'Sibsy', u'145': u'Mare Do Well', u'142': u'Star Hunter', u'143': u'Sir Lintcelot', u'140': u'Filthy Rich', u'141': u'Archer', u'148': u'Clyde', u'149': u'Clover the Clever', u'77': u'Pony Joe', u'76': u'Flam', u'75': u'Lily', u'74': u'Cteno', u'73': u'Snips', u'72': u'Crackle', u'71': u'Blinkie Pie', u'70': u'Diamond Dogs', u'79': u'Surprise (G1)', u'78': u'Flim'};
+
+$(document).ready(function(){
+    var g = new Dygraph(
+        document.getElementById('megachart'),
+        [[u'Applejack', 1584.0], [u'Fluttershy', 2269.0], [u'Pinkie Pie', 2622.0], [u'Twilight Sparkle', 3038.0], [u'Rainbow Dash', 2854.0], [u'Rarity', 1740.0], [u'Apple Bloom', 305.0], [u'Big Macintosh', 734.0], [u'Cheerilee', 161.0], [u'Diamond Tiara', 53.0], [u'Granny Smith', 37.0], [u'Mayor', 116.0], [u'Mr. Carrot Cake', 40.0], [u'Mrs. Cup Cake', 90.0], [u'Princess Celestia', 1019.0], [u'Princess Luna', 1260.0], [u'Scootaloo', 539.0], [u'Sweetie Belle', 458.0], [u'Spike', 992.0], [u'Zecora', 207.0], [u'Angel', 40.0], [u'Gummy', 69.0], [u'Opalescence', 16.0], [u'Owlowiscious', 10.0], [u'Philomena', 6.0], [u'Tank', 7.0], [u'Winona', 39.0], [u'Berry Punch', 142.0], [u'Bon Bon', 203.0], [u'Caramel', 82.0], [u'Colgate', 54.0], [u'Crackle', 24.0], [u'Derpy', 593.0], [u'Dinky Doo', 52.0], [u'Doctor Whooves', 27.0], [u'Golden Harvest', 48.0], [u'Lyra Heartstrings', 749.0], [u'Octavia', 275.0], [u'Rose', 28.0], [u'Silver Spoon', 47.0], [u'Snails', 111.0], [u'Snips', 23.0], [u"Soarin'", 150.0], [u'Spitfire', 235.0], [u'Steven Magnet', 16.0], [u'Vinyl Scratch', 267.0], [u'Braeburn', 215.0], [u'Cranky Doodle Donkey', 9.0], [u'Daring Do', 144.0], [u'Discord', 222.0], [u'Flam', 20.0], [u'Flim', 19.0], [u'Gilda', 202.0], [u'Iron Will', 31.0], [u'Queen Chrysalis', 184.0], [u'Princess Cadence', 89.0], [u'Shining Armor', 54.0], [u'The Great and Powerful Trixie', 521.0], [u'Ace', 1.0], [u'Allie Way', 15.0], [u'Aloe', 146.0], [u'Archer', 3.0], [u'Aunt Orange', 6.0], [u'Berry Pinch', 27.0], [u'Blinkie Pie', 26.0], [u'Bloomberg', 10.0], [u'Blossomforth', 60.0], [u'Blues', 10.0], [u'Caesar', 11.0], [u'Chief Thunderhooves', 0.0], [u'Cherry Jubilee', 17.0], [u'Cloudchaser', 32.0], [u'Cloud Kicker', 12.0], [u'Clyde', 2.0], [u'Cockatrice', 15.0], [u'Comet Tail', 1.0], [u'Dainty Dove', 1.0], [u'Daisy', 11.0], [u'Davenport', 1.0], [u'Dizzy Twister', 0.0], [u'Dumb-Bell', 14.0], [u'Fancypants', 16.0], [u'Featherweight', 5.0], [u'Fire Streak', 1.0], [u'Filthy Rich', 3.0], [u'Fleur de Lis', 102.0], [u'Flitter', 55.0], [u'Frederic Horseshoepin', 0.0], [u'Golden Delicious', 1.0], [u'Happy Trails', 1.0], [u'Hoity Toity', 38.0], [u'Inkie Pie', 31.0], [u'Junebug', 2.0], [u'Lickety Split', 14.0], [u'Lily', 20.0], [u'Little Strongheart', 18.0], [u'Lotus', 112.0], [u'Love Letter', 5.0], [u'Lucy Packard', 4.0], [u'Madame Le Floure', 2.0], [u'Magnum', 4.0], [u'Matilda', 0.0], [u'Mare Do Well', 2.0], [u'Mr. Turnips', 4.0], [u'Neon Lights', 16.0], [u'Noteworthy', 5.0], [u'Nurse Redheart', 57.0], [u'Orion', 74.0], [u'Parasprite', 17.0], [u'Photo Finish', 59.0], [u'Picture Perfect', 5.0], [u'Pipsqueak', 67.0], [u'Pokey Pierce', 8.0], [u'Pony Joe', 19.0], [u'Prairie Tune', 1.0], [u'Prince Blueblood', 54.0], [u'Promontory', 8.0], [u'Pumpkin Cake', 14.0], [u'Pound Cake', 13.0], [u'Raindrops', 14.0], [u"Rarity's Mom (Pearl)", 69.0], [u'Rockey', 1.0], [u'Roid Rage', 6.0], [u'Romana', 18.0], [u'Rover', 14.0], [u'Sapphire Shores', 14.0], [u'Screwball', 13.0], [u'Sir Lintcelot', 2.0], [u'Smartypants', 4.0], [u'Spectrum', 3.0], [u'Star Hunter', 2.0], [u'Sue / Roxy', 1.0], [u'Sunburst', 3.0], [u'Thunderlane', 14.0], [u'Tom', 11.0], [u'Night Light', 15.0], [u'Tootsie Flute', 0.0], [u'Twilight Velvet', 8.0], [u'Twist', 71.0], [u'Uncle Orange', 3.0], [u'Upper Crust', 0.0], [u'Ursa Major', 1.0], [u'Ursa Minor', 3.0], [u'Wind Whistler', 6.0], [u'Written Script', 5.0], [u'Commander Hurricane', 0.0], [u'Clover the Clever', 2.0], [u'Chancellor Puddinghead', 0.0], [u'Smart Cookie', 0.0], [u'Private Pansy', 1.0], [u'Princess Platinum', 1.0], [u'Star Swirl the Bearded', 6.0], [u'Lauren Faust', 39.0], [u'Sibsy', 2.0], [u'Nyx', 191.0], [u'Maplejack', 10.0], [u'Cteno', 23.0], [u'Honey Dip', 3.0], [u'Firefly', 7.0], [u'Posey (G1)', 4.0], [u'Shady (G1)', 5.0], [u'Sparkler (G1)', 5.0], [u'Star Sparkle (G1)', 11.0], [u'Surprise (G1)', 18.0], [u'Cutie Mark Crusaders', 127.0], [u'Diamond Dogs', 26.0], [u'Flim Flam Brothers', 1.0], [u"Pinkie Pie's Sisters", 15.0], [u'Mane Six', 15.0], [u'Royal Guards', 59.0], [u'Shadowbolts', 9.0], [u'The_Wonderbolts', 159.0], [u'Nightmare Moon', 152.0]],
+        { 
+            drawXAxis: false,
+            axes: {
+                x: {
+                  valueFormatter: function(d) {
+                    return "<b>#" + d + " " + pokemon[d] + "</b><br>";
+                  }
+                },
+                y: {
+                  valueFormatter: function(d) {
+                    return d + " images<br>";
+                  }
+                }
+            }
+        }
+    );
+
+    var go = new Dygraph(
+        document.getElementById('megachart_ordered'),
+        [[u'Applejack', 1584.0], [u'Fluttershy', 2269.0], [u'Pinkie Pie', 2622.0], [u'Twilight Sparkle', 3038.0], [u'Rainbow Dash', 2854.0], [u'Rarity', 1740.0], [u'Apple Bloom', 305.0], [u'Big Macintosh', 734.0], [u'Cheerilee', 161.0], [u'Diamond Tiara', 53.0], [u'Granny Smith', 37.0], [u'Mayor', 116.0], [u'Mr. Carrot Cake', 40.0], [u'Mrs. Cup Cake', 90.0], [u'Princess Celestia', 1019.0], [u'Princess Luna', 1260.0], [u'Scootaloo', 539.0], [u'Sweetie Belle', 458.0], [u'Spike', 992.0], [u'Zecora', 207.0], [u'Angel', 40.0], [u'Gummy', 69.0], [u'Opalescence', 16.0], [u'Owlowiscious', 10.0], [u'Philomena', 6.0], [u'Tank', 7.0], [u'Winona', 39.0], [u'Berry Punch', 142.0], [u'Bon Bon', 203.0], [u'Caramel', 82.0], [u'Colgate', 54.0], [u'Crackle', 24.0], [u'Derpy', 593.0], [u'Dinky Doo', 52.0], [u'Doctor Whooves', 27.0], [u'Golden Harvest', 48.0], [u'Lyra Heartstrings', 749.0], [u'Octavia', 275.0], [u'Rose', 28.0], [u'Silver Spoon', 47.0], [u'Snails', 111.0], [u'Snips', 23.0], [u"Soarin'", 150.0], [u'Spitfire', 235.0], [u'Steven Magnet', 16.0], [u'Vinyl Scratch', 267.0], [u'Braeburn', 215.0], [u'Cranky Doodle Donkey', 9.0], [u'Daring Do', 144.0], [u'Discord', 222.0], [u'Flam', 20.0], [u'Flim', 19.0], [u'Gilda', 202.0], [u'Iron Will', 31.0], [u'Queen Chrysalis', 184.0], [u'Princess Cadence', 89.0], [u'Shining Armor', 54.0], [u'The Great and Powerful Trixie', 521.0], [u'Ace', 1.0], [u'Allie Way', 15.0], [u'Aloe', 146.0], [u'Archer', 3.0], [u'Aunt Orange', 6.0], [u'Berry Pinch', 27.0], [u'Blinkie Pie', 26.0], [u'Bloomberg', 10.0], [u'Blossomforth', 60.0], [u'Blues', 10.0], [u'Caesar', 11.0], [u'Chief Thunderhooves', 0.0], [u'Cherry Jubilee', 17.0], [u'Cloudchaser', 32.0], [u'Cloud Kicker', 12.0], [u'Clyde', 2.0], [u'Cockatrice', 15.0], [u'Comet Tail', 1.0], [u'Dainty Dove', 1.0], [u'Daisy', 11.0], [u'Davenport', 1.0], [u'Dizzy Twister', 0.0], [u'Dumb-Bell', 14.0], [u'Fancypants', 16.0], [u'Featherweight', 5.0], [u'Fire Streak', 1.0], [u'Filthy Rich', 3.0], [u'Fleur de Lis', 102.0], [u'Flitter', 55.0], [u'Frederic Horseshoepin', 0.0], [u'Golden Delicious', 1.0], [u'Happy Trails', 1.0], [u'Hoity Toity', 38.0], [u'Inkie Pie', 31.0], [u'Junebug', 2.0], [u'Lickety Split', 14.0], [u'Lily', 20.0], [u'Little Strongheart', 18.0], [u'Lotus', 112.0], [u'Love Letter', 5.0], [u'Lucy Packard', 4.0], [u'Madame Le Floure', 2.0], [u'Magnum', 4.0], [u'Matilda', 0.0], [u'Mare Do Well', 2.0], [u'Mr. Turnips', 4.0], [u'Neon Lights', 16.0], [u'Noteworthy', 5.0], [u'Nurse Redheart', 57.0], [u'Orion', 74.0], [u'Parasprite', 17.0], [u'Photo Finish', 59.0], [u'Picture Perfect', 5.0], [u'Pipsqueak', 67.0], [u'Pokey Pierce', 8.0], [u'Pony Joe', 19.0], [u'Prairie Tune', 1.0], [u'Prince Blueblood', 54.0], [u'Promontory', 8.0], [u'Pumpkin Cake', 14.0], [u'Pound Cake', 13.0], [u'Raindrops', 14.0], [u"Rarity's Mom (Pearl)", 69.0], [u'Rockey', 1.0], [u'Roid Rage', 6.0], [u'Romana', 18.0], [u'Rover', 14.0], [u'Sapphire Shores', 14.0], [u'Screwball', 13.0], [u'Sir Lintcelot', 2.0], [u'Smartypants', 4.0], [u'Spectrum', 3.0], [u'Star Hunter', 2.0], [u'Sue / Roxy', 1.0], [u'Sunburst', 3.0], [u'Thunderlane', 14.0], [u'Tom', 11.0], [u'Night Light', 15.0], [u'Tootsie Flute', 0.0], [u'Twilight Velvet', 8.0], [u'Twist', 71.0], [u'Uncle Orange', 3.0], [u'Upper Crust', 0.0], [u'Ursa Major', 1.0], [u'Ursa Minor', 3.0], [u'Wind Whistler', 6.0], [u'Written Script', 5.0], [u'Commander Hurricane', 0.0], [u'Clover the Clever', 2.0], [u'Chancellor Puddinghead', 0.0], [u'Smart Cookie', 0.0], [u'Private Pansy', 1.0], [u'Princess Platinum', 1.0], [u'Star Swirl the Bearded', 6.0], [u'Lauren Faust', 39.0], [u'Sibsy', 2.0], [u'Nyx', 191.0], [u'Maplejack', 10.0], [u'Cteno', 23.0], [u'Honey Dip', 3.0], [u'Firefly', 7.0], [u'Posey (G1)', 4.0], [u'Shady (G1)', 5.0], [u'Sparkler (G1)', 5.0], [u'Star Sparkle (G1)', 11.0], [u'Surprise (G1)', 18.0], [u'Cutie Mark Crusaders', 127.0], [u'Diamond Dogs', 26.0], [u'Flim Flam Brothers', 1.0], [u"Pinkie Pie's Sisters", 15.0], [u'Mane Six', 15.0], [u'Royal Guards', 59.0], [u'Shadowbolts', 9.0], [u'The_Wonderbolts', 159.0], [u'Nightmare Moon', 152.0]],
+        { 
+            drawXAxis: false,
+            axes: {
+                x: {
+                    valueFormatter: function(d) {
+                        return "<b>#" + reorderings[d] + " " + pokemon[reorderings[d]] + "</b><br>";
+                    }
+                },
+                y: {
+                    logscale: true,
+                    valueFormatter: function(d) {
+                        return d + " images<br>";
+                    }
+                }
+            }
+        }
+    );
+});
+</script>
+
+<style>
+.ratios {
+    width: 500px;
+    height: 18px;
+    border: 0;
+}
+
+.ratios div {
+    display: inline-block;
+    float: left;
+    height: 12px;
+    line-height: 12px;
+    font-size: 8px;
+    overflow: hidden;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+    color: white;
+}
+
+th span.sortoptions { font-weight: normal; }
+
+.vertical-text {
+    text-align: center;
+    vertical-align: middle;
+    width: 20px;
+    margin: 0px;
+    padding: 0px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 10px;
+    font-size: 12px;
+    white-space: nowrap;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+}
+
+
+</style>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-30509081-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+
+
+
+
+
+
+
+
+
+
+<body>
+    <div class="navbar" style="margin-bottom: 0">
+        <div class="navbar-inner">
+            <ul class="nav pull-left">
+                <li><a href="index.html">Ponystats!</a></li>
+            </ul>
+            <div class="container">
+                    
+                <ul class="nav">
+                    <li><a href="breakdowns.html">Information Breakdowns</a></li>
+                
+                    <li class="divider-vertical"></li>
+
+                    <li><a href="linecharts.html">Line Charts</a></li>
+                    
+                    <li class="divider-vertical"></li>
+                    
+                    <li><a href="chart.html#pokemon-header">The Big Chart</a></li>
+
+                </ul>
+                <ul class="nav pull-right">
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="start"></div>
+
+    <div class="hero-unit alert information" style="background-color: #EACCDB; border-color: #EDB1CF; color: black;">
+        <h1 style="text-align: center">Ponystats!</h1>
+        <h3 style="text-align: center">There's <i>how much</i> of <i>WHAT</i> on the Internet?</h3>
+    </div>
+
+    
+    <div class="page-header">
+        <h3>Pok&eacute;mon, by Pok&eacute;dex number.</h3>
+    </div>
+
+    <div class="row">
+        <div id="megachart" class="span12" style="width: 1170px; height: 450px">
+        </div>
+    </div>
+     <div class="row">
+        <div class="span12">
+            <p>
+                <br>
+                This highlights the magnitude of the spikes nicely, but doesn't tell you much else.
+            </p>
+        </div>
+    </div>
+
+     <div class="page-header">
+        <h3>Pok&eacute;mon, by amount of pornography. (log scale)</h3>
+    </div>
+
+    <div class="row">
+        <div id="megachart_ordered" class="span12" style="width: 1170px; height: 450px">
+        </div>
+    </div>
+     <div class="row">
+        <div class="span12">
+            <p>
+                <br>
+                Even in log scale, the dropoff is incredibly steep.
+            </p>
+        </div>
+    </div>
+
+
+    <div class="page-header" id="about">
+        <h3>About</h3>
+    </div>
+    <div class="row">
+        <div class="span1 offset1">
+            <img src="img/11.png" alt="Usericon">
+        </div>
+        <div class="span9">
+            <p>
+                This site was built by Interrostat.
+                <address>
+                    <strong>Twitter</strong>
+                    <a href="https://twitter.com/interrostat">@interrostat</a><br>
+                    <strong>Github</strong>
+                    <a href="https://github.com/interrostat">interrostat</a>
+                </address>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ponystats</title>
+    <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script type="text/javascript" charset="utf8" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="js/bootstrap-tab.js"></script>
+    <script type="text/javascript" charset="utf8" src="js/jquery.dataTables.js"></script>
+    <script type="text/javascript" charset="utf8" src="js/jquery.sparkline.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="js/stats.js"></script>
+    
+    
+<style>
+.ratios {
+    width: 500px;
+    height: 18px;
+    border: 0;
+}
+
+.ratios div {
+    display: inline-block;
+    float: left;
+    height: 12px;
+    line-height: 12px;
+    font-size: 8px;
+    overflow: hidden;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+    color: white;
+}
+
+th span.sortoptions { font-weight: normal; }
+
+.vertical-text {
+    text-align: center;
+    vertical-align: middle;
+    width: 20px;
+    margin: 0px;
+    padding: 0px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 10px;
+    font-size: 12px;
+    white-space: nowrap;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+}
+
+
+</style>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-30509081-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+
+
+
+
+
+
+
+
+
+
+<body>
+    <div class="navbar" style="margin-bottom: 0">
+        <div class="navbar-inner">
+            <ul class="nav pull-left">
+                <li><a href="index.html">Ponystats!</a></li>
+            </ul>
+            <div class="container">
+                    
+                <ul class="nav">
+                    <li><a href="breakdowns.html">Sexualities &amp; Pairings</a></li>
+                
+                    <li class="divider-vertical"></li>
+                    
+                    <li><a href="charts.html">Categorized Charts</a></li>
+
+                    <li class="divider-vertical"></li>
+                    
+                    <li><a href="chart.html">The Big Chart</a></li>
+
+                </ul>
+                <ul class="nav pull-right">
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="start"></div>
+
+    <div class="hero-unit alert information" style="background-color: #EACCDB; border-color: #EDB1CF; color: black;">
+        <h1 style="text-align: center">Ponystats! <sup style="font-size: 33%; top: -1.5em">(beta)</sup></h1>
+        <h3 style="text-align: center">Who's the porniest pony of them all?</h3>
+    </div>
+
+    
+<div class="row-fluid offset1">
+    <div class="span8">
+        <p>
+            There's a lot of porn on the internet. Some of that porn goes to sites that ritually tag it with huge amounts of
+            metadata. And while many people use those tags to help find exactly the thing that floats their boat, that's not the
+            only thing you can do with metadata.
+            <br>
+            <br>
+            <h4>You can <i>make charts with it</i>.</h4>
+            <br>
+            <br>
+            And that's exactly what's been done here. The world of My Little Pony: Friendship Is Magic has a multitude of characters and an extremely active fan community.
+        </p>
+        <p>
+            So let's start charting. Perhaps take a look at who's the most popular - and least popular - of <a href="charts.html#mane-six">The Mane Six</a>.
+        </p>
+        <p>
+            This method also reveals the relative sexuality of Pony porn - so if you've ever wondered who <a href="breakdowns.html#most-gay">the gayest pony</a> was?, now you can find out!
+        </p>
+        <p>
+            Or perhaps you're more interested in <a href="breakdowns.html#most-bisexual">who gets into the most orgies</a>, or what <a href="breakdowns.html#top-pairings">the most popular pairings are</a>?
+        </p>
+        <p>
+            It's all here! If you want to know more, check out the <a href="faq.html">FAQ</a>.
+        </p>
+    </div>
+    <div class="span2 hero-unit" style="background-color: #D9EDF7; border-color: #BCE8F1; color: #3A87AD; text-align: center">
+        <h3>More interested in Pok&eacute;mon?</h3><br>
+        <a href="/pokemon/index.html">Check out the Pok&eacute;stats</a>!
+    </div>
+</div>
+
+
+    <div class="page-header" id="about">
+        <h3>About</h3>
+    </div>
+    <div class="row">
+        <div class="span1 offset1">
+            <img src="img/11.png" alt="Usericon">
+        </div>
+        <div class="span9">
+            <p>
+                This site was built by Interrostat.<br>
+                Contact Information:
+                <address>
+                    <strong>Twitter:</strong> <a href="https://twitter.com/interrostat">@interrostat</a>
+                    <strong>Reddit:</strong> <a href="http://www.reddit.com/user/interrostat/">interrostat</a><br>
+                    <strong>Github:</strong> <a href="https://github.com/interrostat">interrostat</a>
+                    <strong>Tumblr:</strong> <a href="http://interrostat.tumblr.com/">interrostat</a><br>
+                </address>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

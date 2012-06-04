@@ -1,0 +1,156 @@
+{% extends "base.template" %}
+{% block title %} - FAQ{% endblock %}
+{% block head %}
+{% endblock %}
+
+{% block content %}
+    <div class="page-header" id="faq">
+        <h3>FAQ</h3>
+    </div>
+
+    {% call faq('Why did you do this?') %}
+       <p>
+            Because <em>data is delicious.</em>
+        </p>
+        <p>
+            It started with the <a href="/pokemon/index.html">Pok&eacute;stats</a> project, which quickly showed itself to be very popular on Reddit, including
+            the <a href="http://www.reddit.com/r/clopclop">/r/clopclop</a> subreddit. A user there volunteered to curate the list of ponies and tags, and so this version was born.
+        </p>
+        <p>
+            I'm calling the site a beta version for now because unlike with Pok&eacute;mon, there's no hard and fast definitive canon to work with. It needs help to work out the little problems.
+        </p>
+    {% endcall %}
+
+    {% call faq('How did you do this?') %}
+       <p>
+            It's all done in Python.<br>
+            A little script fetches all the data from the sites, results are parsed out, and a page is generated.
+            The source is even available <a href="https://github.com/interrostat/pokestats">on Github</a> for your perusal.
+        </p>
+            The <a href="https://docs.google.com/spreadsheet/pub?key=0AjMpWL6vKe22dFVLdlRjR1JVcWhjbnhIUFIxV1Bndmc&amp;output=html">pony database</a> used to generate this site is kept as a simple spreadsheet.
+            A lot of effort has gone into curating that database - it's a lot trickier than it first appears! And there's always room for improvement.
+        <p>
+        </p>
+    {% endcall %}
+
+    {% call faq('Can I help?') %}
+       <p>
+            Absolutely!<br>
+            If you have suggestions about the ponies named or tags used, look at the pony database link above and make suggestions via the <a href="#about">contact info</a> at the end of this page.
+        <p>
+            The tagging is <b>miserable</b> on some of these posts. And without good tags, it's hard to get good data.
+            If you can improve them, that'd be the best, both for me and for the users of the boards themselves.<br>
+            If you'd rather help with code, the source is on <a href="https://github.com/interrostat">Github</a>, and the most complicated function - by far - is tag analysis.
+            Got ideas? Bring them up there or <a href="https://twitter.com/interrostat">on Twitter</a>! I'd be happy to take pull requests and discussions.
+        </p>
+    {% endcall %}
+
+    {% call faq('Why did you choose these sites?') %}
+       <p>
+            They're the biggest sites I could easily query. They make it possible to programatically fetch all the post information for a given tag, and from there I can eliminate duplicates (by cross-referencing the md5) and learn more from the sites together than any one provides alone.
+        </p>
+        <p>
+            <a href="http://www.e621.net/">e621.net</a> is a general-furry pornography board. It's big and has high tagging standards, making it a key player in this game.
+        </p>
+        <p>
+            <a href="http://www.wildcritters.ws/">wildcritters.ws</a> supposedly specialize in cute and/or feral material. They don't have much MLP content, but I was already crawling them
+            in the Pokestats project.
+        </p>
+        <p>
+            <a href="http://rule34.paheal.net/">rule34.paheal.net</a> is probably the most famous of the rule34 sites. It's got huge volumes of content, but has sadly chosen
+            to not tag sexuality information, so it doesn't help the charts.
+        </p>
+        <p>
+            <a href="http://rule34.xxx/">rule34.xxx</a> is the largest site on the booru.org network. It's got a <b>lot</b> of porn. Which is great for counting
+            data, but the site's tagging is extremely poor.
+        </p>
+        <p>
+            <a href="http://www.ponibooru.org/">ponibooru.org</a> is a specialized boardfor MLP-related material. Unfortunately, they're painfully, painfully slow. Crawling them was a nightmare.
+        </p>
+        <p>
+            Both of the rule34 sites do not make any effort to seperate MLP character tags from the tags for other characters with the same name. When this happens, it leads to images being included
+            that shouldn't be, so when I see a namespace collision, I exclude the tag from those sites. 
+        </p>
+        <p>
+            If you have any other suggestions, let me know! There's contact info at the end of the page.
+        </p>
+    {% endcall %}
+
+    {% call faq("Why don't you scrape DA / FA / Pixiv / etc?") %}
+        <p>
+            I want to!<br>
+            But it just can't be done automatically. On most of the sites that function as "primary sources", people don't have much incentive to thoroughly and consistently
+            tag images. And without tagging, there'd be no way to identify porn that belongs here.
+        </p>
+        <p>
+            On top of that, the sites being used all identify image files the same way - by md5 hash. This makes it possible to tell when multiple sites are talking about the <b>same</b>
+            image without having to download it first. Having to download everything would be incredibly expensive!
+        </p>
+    {% endcall %}
+    
+    {% call faq("What's with the sexuality charts?", id="sexuality") %}
+        <p>
+            The idea was just too great to pass up.<br>
+            They're an attempt to categorize posts based on the tagging provided.<br>
+            Each post is, if possible, categorized into one of the following buckets:
+        </p>
+        <p>
+            <b>G</b>: Bisexual/Group. These posts probably contain more than two characters, and that's as much as can be automatically determined.
+        </p>
+        <p>
+            <b>?</b>: Ambiguous/Intersex/Herm. There's nonbinary gender going on here.
+        </p>
+        <p>
+            <b>G</b>: Gay.
+        </p>
+        <p>
+            <b>M</b>: Male (solo).
+        </p>
+        <p>
+            <b>F</b>: Female (solo).
+        </p>
+        <p>
+            <b>L</b>: Lesbian. 
+        </p>
+        <p>
+            <b>m</b>: Male (inferred). The image did not have sufficient tagging to put it in any of the above categories, but had tags (ie: "penis") implying it depicts a male.
+        </p>
+        <p>
+            <b>f</b>: Female (inferred). See above.
+        </p>
+        <p>
+            <b>s</b>: Straight (inferred). The image was not directly tagged into a category, but picked up signs of both male-inferred and female-inferred. Best guess is, it's straight. Alternatively, the image was directly tagged with 'male' and 'female', but nothing to say it's 'straight' or 'group' or 'ambiguous'.
+        </p>
+    {% endcall %}
+    {% call faq("You're missing (Pony Name)! / Could you add my favorite OC?", id="you-missed-my-oc") %}
+        <p>
+            It would definitely be possible. Take a look at the <a href="https://docs.google.com/spreadsheet/pub?key=0AjMpWL6vKe22dFVLdlRjR1JVcWhjbnhIUFIxV1Bndmc&amp;output=html">pony database</a> this site is generated from, in case it's already folded in with another or has notes. Then contact me and I'll add it in the next update.
+        </p>
+    {% endcall %}
+    {% call faq("Can I access the data from this?") %}
+        <p>
+            Absolutely!<br>
+            There's several steps involved in creating this site.<br>
+            If you'd like the post and tag results from the site crawls, after they're combined together, you can get that as <a href="mlp.combined.json">mlp.combined.json</a>.<br>
+            That's followed up by further analysis to create the tables you see here. The data for that is <a href="mlp.analyzed.json">mlp.analyzed.json</a><br>
+            Do let me know if you do anything interesting with it!
+        </p>
+    {% endcall %}
+    {% call faq("Your numbers aren't right!") %}
+        <p>
+            The counts often don't quite match what shows up when you click the links. There's a couple reasons for this:
+            <ul>
+                <li>The searches on e621.net and wildcritters.ws use the -rating:safe filter, to exclude non-porn posts. On their site, the total counts seem to be
+                both heavily cached and not always for exactly what the search query was. Trust the number of pages more than the sidebar.
+                </li>
+                <li>For many of these entries, I crawl multiple tags and combine the results. On e621.net and wilcritters.ws, I can create a link to "any of these tags", but
+                    on the other sites that's not available, so the link only goes to the tag that produced the most results.
+                </li>
+                <li>Ponibooru does not display rating:explicit images unless you login or set your user preferences, so be wary of that.
+                    The crawler only looks at the "questionable" and "explicit" categories.
+                </li>
+            </ul>
+            If you find another source of error, let me know! I'd be glad to fix it.
+        </p>
+    {% endcall %}
+{% endblock %}

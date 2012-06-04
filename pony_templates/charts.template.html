@@ -1,0 +1,151 @@
+{% extends "base.template" %}
+{% block title %} - Categorized Charts{% endblock %}
+{% block head %}
+    <script type="text/javascript">
+    var made = {};
+    function make_once(id) {
+        if(id in made)
+            return;
+        makeTable(id);
+        made[id] = id;
+    }
+
+    $(document).ready(function(){
+        $('a[href="#mane-six"]').on("shown", function() { make_once('#mane-six-chart'); });
+        $('a[href="#supporting-cast"]').on("shown", function() { make_once('#supporting-cast-chart'); });
+        $('a[href="#ascended-extras"]').on("shown", function() { make_once('#ascended-extras-chart'); });
+        $('a[href="#one-shot-characters"]').on("shown", function() { make_once('#one-shot-characters-chart'); });
+        $('a[href="#background-characters"]').on("shown", function() { make_once('#background-characters-chart'); });
+        $('a[href="#g1-ponies"]').on("shown", function() { make_once('#g1-ponies-chart'); });
+        $('a[href="#pets"]').on("shown", function() { make_once('#pets-chart'); });
+        $('a[href="#groups"]').on("shown", function() { make_once('#groups-chart'); });
+        $('a[href="#special-cases"]').on("shown", function() { make_once('#special-cases-chart'); });
+        $('a[href="#fanon-ocs"]').on("shown", function() { make_once('#fanon-ocs-chart'); });
+
+        var initial_shown = false;
+        $('a[data-toggle="tab"]').each(function(){
+            if ($(this).attr("href") == window.location.hash) {
+                $(this).trigger('shown');
+                initial_shown = true;
+            }
+        });
+        if(!initial_shown) {
+            make_once('#mane-six-chart');
+        }
+    });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header" id="pony-header">
+        <h2>Ponies</h2>
+    </div>
+    <div class="row">
+         <div class="span tabbable tabs-left" style="width: 1200px">
+                <ul class="nav nav-tabs nav-stacked">
+                    <li><h4>Pony Categories</h4></li>
+                    <li><a href="#mane-six" data-toggle="tab">The Mane Six</a></li>
+                    <li><a href="#supporting-cast" data-toggle="tab">Supporting Cast</a></li>
+                    <li><a href="#ascended-extras" data-toggle="tab">Ascended Extras</a></li>
+                    <li><a href="#one-shot-characters" data-toggle="tab">One-Shot Characters</a></li>
+                    <li><a href="#background-characters" data-toggle="tab">Background Characters</a></li>
+                    <li><h4>Misc</h4></li>
+                    <li><a href="#pets" data-toggle="tab">Pets</a></li>
+                    <li><a href="#groups" data-toggle="tab">Generic Groups</a></li>
+                    <li><a href="#fanon-ocs" data-toggle="tab">Fanon OCs</a></li>
+                    <li><br><br><h4>Everything Together</h4></li>
+                    <li><a href="chart.html">The Big Chart</a></li>
+                </ul>
+
+                <div class="tab-content" style="width: 1000px">
+                    <div id="mane-six" class="tab-pane active">
+                        <h3>The Mane Six</h3>
+                        <p>The protagonists of the show.</p>
+                        <br>
+                        {{ create_chart(category_rows['mane_six'], 'mane-six-chart') }}
+                         <br><br>
+                        <p>
+                           Applejack is the least popular pony by a good margin, at just over half the results of Twilight Sparkle.<br>
+                           This seems to directly contradict an <a href="http://www.equestriaafterdark.net/2012/05/applejack-tops-icame-chart.html">earlier study</a> that indicated her to be the most popular.<br>
+                           Does anyone know why?
+                        </p>
+                    </div>
+                
+                    <div id="supporting-cast" class="tab-pane">
+                        <h3>Supporting Cast</h3>
+                        <p>Characters with ongoing speaking roles.</p>
+                        <br>
+                        {{ create_chart(category_rows['supporting_cast'], 'supporting-cast-chart') }}
+                         <br><br>
+                        <p>
+                           Once you move out of the main cast, the princesses take the lead.
+                        </p>
+                    </div>
+                
+                    <div id="ascended-extras" class="tab-pane">
+                        <h3>Ascended Extras</h3>
+                        <p>Minor characters from the show that have an outsized impact on fanon.</p>
+                        <br>
+                        {{ create_chart(category_rows['ascended_extras'], 'ascended-extras-chart') }}
+                         <br><br>
+                        <p>
+                            There's quite a gap between Derpy and the others.
+                        </p>
+                    </div>
+                    <div id="one-shot-characters" class="tab-pane">
+                        <h3>One-Shot Characters</h3>
+                        <p>Major speaking roles in only one episode.</p>
+                        <br>
+                        {{ create_chart(category_rows['one_shot_chars'], 'one-shot-characters-chart') }}
+                         <br><br>
+                        <p>
+                            The keys to a successful one-shot character:<ol>
+                                <li>Be an exotic species</li>
+                                <li>Be male</li>
+                            </ol>
+                        </p>
+                    </div>
+                    <div id="background-characters" class="tab-pane">
+                        <h3>Background Characters</h3>
+                        <p>Filler ponies with no major speaking roles.</p>
+                        <br>
+                        {{ create_chart(category_rows['extras'], 'background-characters-chart') }}
+                         <br><br>
+                        <p>
+                           And here's where the result counts rapidly dwindle down to nothing. 
+                        </p>
+                    </div>
+                    <div id="pets" class="tab-pane">
+                        <h3>Pets</h3>
+                        <p>Animals owned by another pony.</p>
+                        <br>
+                        {{ create_chart(category_rows['pets'], 'pets-chart') }}
+                         <br><br>
+                        <p>
+                           It's a little surprising just how many ponies have less porn than Gummy.
+                        </p>
+                    </div>
+                    <div id="groups" class="tab-pane">
+                        <h3>Generic Groups</h3>
+                        <p>Characters that appear in aggregate without having individual names.</p>
+                        <br>
+                        {{ create_chart(category_rows['groups'], 'groups-chart') }}
+                         <br><br>
+                        <p>
+                            This is a bit of a hodgepodge.
+                        </p>
+                    </div>
+                    <div id="fanon-ocs" class="tab-pane">
+                        <h3>Fanon OCs</h3>
+                        <p>Characters with ongoing speaking roles.</p>
+                        <br>
+                        {{ create_chart(category_rows['fanon_ponies'], 'fanon-ocs-chart') }}
+                         <br><br>
+                        <p>
+                           This list is incomplete. Did we miss your favorite OC? <a href="faq.html#you-missed-my-oc">Let us know!</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ponystats - FAQ</title>
+    <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script type="text/javascript" charset="utf8" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="js/bootstrap-tab.js"></script>
+    <script type="text/javascript" charset="utf8" src="js/jquery.dataTables.js"></script>
+    <script type="text/javascript" charset="utf8" src="js/jquery.sparkline.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="js/stats.js"></script>
+    
+
+<style>
+.ratios {
+    width: 500px;
+    height: 18px;
+    border: 0;
+}
+
+.ratios div {
+    display: inline-block;
+    float: left;
+    height: 12px;
+    line-height: 12px;
+    font-size: 8px;
+    overflow: hidden;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+    color: white;
+}
+
+th span.sortoptions { font-weight: normal; }
+
+.vertical-text {
+    text-align: center;
+    vertical-align: middle;
+    width: 20px;
+    margin: 0px;
+    padding: 0px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 10px;
+    font-size: 12px;
+    white-space: nowrap;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+}
+
+
+</style>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-30509081-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+
+
+
+
+
+
+
+
+
+
+<body>
+    <div class="navbar" style="margin-bottom: 0">
+        <div class="navbar-inner">
+            <ul class="nav pull-left">
+                <li><a href="index.html">Ponystats!</a></li>
+            </ul>
+            <div class="container">
+                    
+                <ul class="nav">
+                    <li><a href="breakdowns.html">Sexualities &amp; Pairings</a></li>
+                
+                    <li class="divider-vertical"></li>
+                    
+                    <li><a href="charts.html">Categorized Charts</a></li>
+
+                    <li class="divider-vertical"></li>
+                    
+                    <li><a href="chart.html">The Big Chart</a></li>
+
+                </ul>
+                <ul class="nav pull-right">
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="start"></div>
+
+    <div class="hero-unit alert information" style="background-color: #EACCDB; border-color: #EDB1CF; color: black;">
+        <h1 style="text-align: center">Ponystats! <sup style="font-size: 33%; top: -1.5em">(beta)</sup></h1>
+        <h3 style="text-align: center">Who's the porniest pony of them all?</h3>
+    </div>
+
+    
+    <div class="page-header" id="faq">
+        <h3>FAQ</h3>
+    </div>
+
+    <div class="row" style="margin-top: 2em" >
+        <div class="span8 offset1">
+            <h4>Why did you do this?</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8 offset1">
+        
+       <p>
+            Because <em>data is delicious.</em>
+        </p>
+        <p>
+            It started with the <a href="/pokemon/index.html">Pok&eacute;stats</a> project, which quickly showed itself to be very popular on Reddit, including
+            the <a href="http://www.reddit.com/r/clopclop">/r/clopclop</a> subreddit. A user there volunteered to curate the list of ponies and tags, and so this version was born.
+        </p>
+        <p>
+            I'm calling the site a beta version for now because unlike with Pok&eacute;mon, there's no hard and fast definitive canon to work with. It needs help to work out the little problems.
+        </p>
+    
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 2em" >
+        <div class="span8 offset1">
+            <h4>How did you do this?</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8 offset1">
+        
+       <p>
+            It's all done in Python.<br>
+            A little script fetches all the data from the sites, results are parsed out, and a page is generated.
+            The source is even available <a href="https://github.com/interrostat/pokestats">on Github</a> for your perusal.
+        </p>
+            The <a href="https://docs.google.com/spreadsheet/pub?key=0AjMpWL6vKe22dFVLdlRjR1JVcWhjbnhIUFIxV1Bndmc&amp;output=html">pony database</a> used to generate this site is kept as a simple spreadsheet.
+            A lot of effort has gone into curating that database - it's a lot trickier than it first appears! And there's always room for improvement.
+        <p>
+        </p>
+    
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 2em" >
+        <div class="span8 offset1">
+            <h4>Can I help?</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8 offset1">
+        
+       <p>
+            Absolutely!<br>
+            If you have suggestions about the ponies named or tags used, look at the pony database link above and make suggestions via the <a href="#about">contact info</a> at the end of this page.
+        <p>
+            The tagging is <b>miserable</b> on some of these posts. And without good tags, it's hard to get good data.
+            If you can improve them, that'd be the best, both for me and for the users of the boards themselves.<br>
+            If you'd rather help with code, the source is on <a href="https://github.com/interrostat">Github</a>, and the most complicated function - by far - is tag analysis.
+            Got ideas? Bring them up there or <a href="https://twitter.com/interrostat">on Twitter</a>! I'd be happy to take pull requests and discussions.
+        </p>
+    
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 2em" >
+        <div class="span8 offset1">
+            <h4>Why did you choose these sites?</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8 offset1">
+        
+       <p>
+            They're the biggest sites I could easily query. They make it possible to programatically fetch all the post information for a given tag, and from there I can eliminate duplicates (by cross-referencing the md5) and learn more from the sites together than any one provides alone.
+        </p>
+        <p>
+            <a href="http://www.e621.net/">e621.net</a> is a general-furry pornography board. It's big and has high tagging standards, making it a key player in this game.
+        </p>
+        <p>
+            <a href="http://www.wildcritters.ws/">wildcritters.ws</a> supposedly specialize in cute and/or feral material. They don't have much MLP content, but I was already crawling them
+            in the Pokestats project.
+        </p>
+        <p>
+            <a href="http://rule34.paheal.net/">rule34.paheal.net</a> is probably the most famous of the rule34 sites. It's got huge volumes of content, but has sadly chosen
+            to not tag sexuality information, so it doesn't help the charts.
+        </p>
+        <p>
+            <a href="http://rule34.xxx/">rule34.xxx</a> is the largest site on the booru.org network. It's got a <b>lot</b> of porn. Which is great for counting
+            data, but the site's tagging is extremely poor.
+        </p>
+        <p>
+            <a href="http://www.ponibooru.org/">ponibooru.org</a> is a specialized boardfor MLP-related material. Unfortunately, they're painfully, painfully slow. Crawling them was a nightmare.
+        </p>
+        <p>
+            Both of the rule34 sites do not make any effort to seperate MLP character tags from the tags for other characters with the same name. When this happens, it leads to images being included
+            that shouldn't be, so when I see a namespace collision, I exclude the tag from those sites. 
+        </p>
+        <p>
+            If you have any other suggestions, let me know! There's contact info at the end of the page.
+        </p>
+    
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 2em" >
+        <div class="span8 offset1">
+            <h4>Why don't you scrape DA / FA / Pixiv / etc?</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8 offset1">
+        
+        <p>
+            I want to!<br>
+            But it just can't be done automatically. On most of the sites that function as "primary sources", people don't have much incentive to thoroughly and consistently
+            tag images. And without tagging, there'd be no way to identify porn that belongs here.
+        </p>
+        <p>
+            On top of that, the sites being used all identify image files the same way - by md5 hash. This makes it possible to tell when multiple sites are talking about the <b>same</b>
+            image without having to download it first. Having to download everything would be incredibly expensive!
+        </p>
+    
+        </div>
+    </div>
+    
+    <div class="row" style="margin-top: 2em" id="sexuality">
+        <div class="span8 offset1">
+            <h4>What's with the sexuality charts?</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8 offset1">
+        
+        <p>
+            The idea was just too great to pass up.<br>
+            They're an attempt to categorize posts based on the tagging provided.<br>
+            Each post is, if possible, categorized into one of the following buckets:
+        </p>
+        <p>
+            <b>G</b>: Bisexual/Group. These posts probably contain more than two characters, and that's as much as can be automatically determined.
+        </p>
+        <p>
+            <b>?</b>: Ambiguous/Intersex/Herm. There's nonbinary gender going on here.
+        </p>
+        <p>
+            <b>G</b>: Gay.
+        </p>
+        <p>
+            <b>M</b>: Male (solo).
+        </p>
+        <p>
+            <b>F</b>: Female (solo).
+        </p>
+        <p>
+            <b>L</b>: Lesbian. 
+        </p>
+        <p>
+            <b>m</b>: Male (inferred). The image did not have sufficient tagging to put it in any of the above categories, but had tags (ie: "penis") implying it depicts a male.
+        </p>
+        <p>
+            <b>f</b>: Female (inferred). See above.
+        </p>
+        <p>
+            <b>s</b>: Straight (inferred). The image was not directly tagged into a category, but picked up signs of both male-inferred and female-inferred. Best guess is, it's straight. Alternatively, the image was directly tagged with 'male' and 'female', but nothing to say it's 'straight' or 'group' or 'ambiguous'.
+        </p>
+    
+        </div>
+    </div>
+    <div class="row" style="margin-top: 2em" id="you-missed-my-oc">
+        <div class="span8 offset1">
+            <h4>You're missing (Pony Name)! / Could you add my favorite OC?</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8 offset1">
+        
+        <p>
+            It would definitely be possible. Take a look at the <a href="https://docs.google.com/spreadsheet/pub?key=0AjMpWL6vKe22dFVLdlRjR1JVcWhjbnhIUFIxV1Bndmc&amp;output=html">pony database</a> this site is generated from, in case it's already folded in with another or has notes. Then contact me and I'll add it in the next update.
+        </p>
+    
+        </div>
+    </div>
+    <div class="row" style="margin-top: 2em" >
+        <div class="span8 offset1">
+            <h4>Can I access the data from this?</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8 offset1">
+        
+        <p>
+            Absolutely!<br>
+            There's several steps involved in creating this site.<br>
+            If you'd like the post and tag results from the site crawls, after they're combined together, you can get that as <a href="mlp.combined.json">mlp.combined.json</a>.<br>
+            That's followed up by further analysis to create the tables you see here. The data for that is <a href="mlp.analyzed.json">mlp.analyzed.json</a><br>
+            Do let me know if you do anything interesting with it!
+        </p>
+    
+        </div>
+    </div>
+    <div class="row" style="margin-top: 2em" >
+        <div class="span8 offset1">
+            <h4>Your numbers aren't right!</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8 offset1">
+        
+        <p>
+            The counts often don't quite match what shows up when you click the links. There's a couple reasons for this:
+            <ul>
+                <li>The searches on e621.net and wildcritters.ws use the -rating:safe filter, to exclude non-porn posts. On their site, the total counts seem to be
+                both heavily cached and not always for exactly what the search query was. Trust the number of pages more than the sidebar.
+                </li>
+                <li>For many of these entries, I crawl multiple tags and combine the results. On e621.net and wilcritters.ws, I can create a link to "any of these tags", but
+                    on the other sites that's not available, so the link only goes to the tag that produced the most results.
+                </li>
+                <li>Ponibooru does not display rating:explicit images unless you login or set your user preferences, so be wary of that.
+                    The crawler only looks at the "questionable" and "explicit" categories.
+                </li>
+            </ul>
+            If you find another source of error, let me know! I'd be glad to fix it.
+        </p>
+    
+        </div>
+    </div>
+
+
+    <div class="page-header" id="about">
+        <h3>About</h3>
+    </div>
+    <div class="row">
+        <div class="span1 offset1">
+            <img src="img/11.png" alt="Usericon">
+        </div>
+        <div class="span9">
+            <p>
+                This site was built by Interrostat.<br>
+                Contact Information:
+                <address>
+                    <strong>Twitter:</strong> <a href="https://twitter.com/interrostat">@interrostat</a>
+                    <strong>Reddit:</strong> <a href="http://www.reddit.com/user/interrostat/">interrostat</a><br>
+                    <strong>Github:</strong> <a href="https://github.com/interrostat">interrostat</a>
+                    <strong>Tumblr:</strong> <a href="http://interrostat.tumblr.com/">interrostat</a><br>
+                </address>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

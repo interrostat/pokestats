@@ -1,5 +1,5 @@
 {% extends "base.template" %}
-{% block title %} - FAQ{% endblock %}
+{% block title %} - Breakdowns{% endblock %}
 {% block head %}
     <script type="text/javascript">
 
@@ -58,7 +58,7 @@ $(document).ready(function(){
 {% block content %}
 
 <div class="row">
-    <div class="span12 tabbable tabs-left">
+    <div class="span tabbable tabs-left" style="width: 1250px">
         <ul class="nav nav-tabs nav-stacked">
             <li><h4>Pokemon Information</h4></li>
             <li><a href="#by-type" data-toggle="tab">Popularity by Type</a></li>
@@ -78,7 +78,7 @@ $(document).ready(function(){
             <li><a href="#top-pairings" data-toggle="tab">Top Two-Pok&eacute;mon Pairings</a></li>
             <li><a href="#top-triples" data-toggle="tab">Top Three-Pok&eacute;mon Triples</a></li>
         </ul>
-        <div class="tab-content">
+        <div class="tab-content" style="width: 1000px">
             <div id="by-type" class="tab-pane active">
                 {{ breakdown('type', 'By Type', 'Type') }}
                  <br><br>
@@ -126,7 +126,7 @@ $(document).ready(function(){
                 {{ create_chart(top_25(rows, 'straight'), 'pokemon-straight', show_sites=False) }}
                 <br><br>
                 <p>
-                    Meloetta's top spot in the Straight category appears to primarily be the work of one user. It doesn't take much!
+                    In June, Pidgeot claimed the top spot from former champion Meloetta! With scores nearing 80% for both of them, it's a tough title to take.
                 </p>
             </div>
 
@@ -190,8 +190,7 @@ $(document).ready(function(){
                 {{ create_chart(delta_rows[:25], 'pokemon-delta', min_size=0.1, data_label="This Month") }}
                 <br><br>
                 <p>
-                    <a href="http://haycheladult.tumblr.com/">Haychel</a>'s thirty-two page Charmander/Ampharos comic has single-handedly dominated the charts
-                    of porn between April and May. Congratulations!
+                    While there's a lot of new works for the usual suspects, the most interesting item here is that 100%-straight Pidgeot row, which is enough to move it from second-straightest to the straightest.
                 </p>
             </div>
 
@@ -223,6 +222,11 @@ $(document).ready(function(){
                     {% endfor %}
                     </tbody>
                 </table>
+                <br><br>
+                <p>
+                    The rating in the pairings table represents <b>(appearances together) * (percentage of total results for A) * (percentage of total results for B)</b><br>
+                    High-ranking entries frequently show up together and infrequently show up apart.
+                </p>
             </div>
 
             <div id="top-triples" class="tab-pane fade">
@@ -255,6 +259,16 @@ $(document).ready(function(){
                     {% endfor %}
                     </tbody>
                 </table>
+                <br><br>
+                <p>
+                    The rating in the triples table represents
+                    <b>(appearances together) * (percentage of total results for A) * (percentage of total results for B) * (percentage of total results for C)</b>
+                    <br>
+                    High-ranking entries frequently show up together and infrequently show up apart.
+                </p>
+                <p>
+                    Also, Eevees. Eevees everywhere.
+                </p>
             </div>
         </div>
     </div>
